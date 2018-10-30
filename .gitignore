@@ -62,3 +62,6 @@ typings/
 
 # IDE folders
 .idea/
+
+# Compiled module
+dist/
