@@ -1,7 +1,9 @@
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: './reactions.js'
+    filename: './reactions.js',
+    library: 'Reactions',
+    libraryTarget: 'umd'
   },
     module: {
     rules: [
