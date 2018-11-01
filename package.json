@@ -7,7 +7,7 @@
     "build:dev": "webpack --mode development",
     "build:watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "linter": "tslint ./src/**/*.ts --fix"
+    "lint": "tslint ./src/**/*.ts --fix"
   },
   "repository": {
     "type": "git",
