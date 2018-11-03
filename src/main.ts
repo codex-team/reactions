@@ -13,7 +13,7 @@ interface Styles {
   wrapper: string;
 }
 /** Class perpesenting a reactions */
-export class Reactions {
+export default class Reactions {
   /** returns style name */
   public static get CSS (): Styles {
     return {
