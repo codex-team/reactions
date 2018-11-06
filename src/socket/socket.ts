@@ -1,12 +1,12 @@
 import * as io from 'socket.io-client'
-import ReactionInfo from './../reaction-info/reaction-info.ts'
+import Reaction from './../reaction/reaction.ts'
 
 /**
  * Instrument to create socket connection
  */
 export default class Socket {
 
-  update: (reactions: ReactionInfo[]) => void
+  update: (reactions: Reaction[]) => void
   socket: any
 
   /**
@@ -16,7 +16,7 @@ export default class Socket {
    * @param {string} serverIP - IP of the server
    * @param {function} update - function which gets data and updates counters
    */
-  constructor (serverIP: string, update: (reactions: ReactionInfo[]) => void) {
+  constructor (serverIP: string, update: (reactions: Reaction[]) => void) {
 
     this.socket = io(serverIP)
     this.update = update

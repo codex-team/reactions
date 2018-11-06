@@ -1,15 +1,15 @@
 /**
  * Info about the reaction
  */
-export default class ReactionInfo {
+export default class Reaction {
 
   value: number
   userReaction: boolean
 
   /**
-   * Creates an instance of ReactionInfo
+   * Creates an instance of Reaction
    *
-   * @this {ReactionInfo}
+   * @this {Reaction}
    * @param {number}  value - value of the counter
    * @param {boolean} userReaction - reaction of the user
    */
@@ -33,7 +33,7 @@ export default class ReactionInfo {
   }
 
   /**
-   * Returns string representation of the ReactionInfo
+   * Returns string representation of the Reaction
    */
   toString (): string {
     return this.getRate() + ' ' + this.isVoted() + '\n'
