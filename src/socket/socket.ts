@@ -4,15 +4,15 @@ import ReactionInfo from './../reaction-info/reaction-info.ts'
 /**
  * Instrument to create socket connection
  */
-export default class Connector {
+export default class Socket {
 
   update: (reactions: ReactionInfo[]) => void
   socket: any
 
   /**
-   * Creates an instance of Connector
+   * Creates an instance of Socket
    *
-   * @this {Connector}
+   * @this {Socket}
    * @param {string} serverIP - IP of the server
    * @param {function} update - function which gets data and updates counters
    */
@@ -28,7 +28,7 @@ export default class Connector {
   /**
    * Sends index of the reaction to the server
    *
-   * @this {Connector}
+   * @this {Socket}
    * @this {number} ind - index of the reaction
    */
   send (ind: number): void {
