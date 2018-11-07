@@ -33,7 +33,7 @@ export default class Reaction {
    * @return {boolean} - the vote of the user
    */
   public isVoted (): boolean {
-    return this.userReaction
+    return this.vote
   }
 
   /**
