@@ -3,39 +3,46 @@
  */
 export default class Reaction {
 
-  value: number
-  userReaction: boolean
+  private value: number
+  private vote: boolean
 
   /**
    * Creates an instance of Reaction
    *
    * @this {Reaction}
    * @param {number}  value - value of the counter
-   * @param {boolean} userReaction - reaction of the user
+   * @param {boolean} vote - reaction of the user
    */
-  constructor (value: number, userReaction: boolean) {
+  constructor (value: number, vote: boolean) {
     this.value = value
-    this.userReaction = userReaction
+    this.vote = vote
   }
 
   /**
-   * Returns value of the counter
+   * Returns the value of the counter
+   *
+   * @return {number} - the value of the counter
    */
-  getRate (): number {
+  public getRate (): number {
     return this.value
   }
 
   /**
-   * Returns reactions of the user
+   * Returns the vote of the user
+   *
+   * @return {boolean} - the vote of the user
    */
-  isVoted (): boolean {
+  public isVoted (): boolean {
     return this.userReaction
   }
 
   /**
-   * Returns string representation of the Reaction
+   * Calculates string representation of the Reaction
+   * 
+   * @override
+   * @return {string} - string representation
    */
-  toString (): string {
+  public toString (): string {
     return this.getRate() + ' ' + this.isVoted() + '\n'
   }
 
