@@ -7,7 +7,7 @@ import Reaction from './../reaction/reaction.ts'
 export default class Socket {
 
   update: (reactions: Reaction[]) => void
-  socket: any
+  socket: SocketIOClient.Socket
 
   /**
    * Creates an instance of Socket
@@ -21,7 +21,7 @@ export default class Socket {
     this.socket = io(serverIP)
     this.update = update
 
-    this.socket.on('message', (msg: any) => update(msg))
+    this.socket.on('message', (msg: Reaction[]) => update(msg))
 
   }
 

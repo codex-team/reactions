@@ -7,6 +7,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.1.tgz#da61b64a2930a80fa708e57c45cd5441eb379d5b"
   integrity sha512-i1sl+WCX2OCHeUi9oi7PiCNUtYFrpWhpcx878vpeq/tlZTKzcFdHePlyFHVbWqeuKN0SRPl/9ZFDSTsfv9h7VQ==
 
+"@types/socket.io-client@^1.4.32":
+  version "1.4.32"
+  resolved "https://registry.yarnpkg.com/@types/socket.io-client/-/socket.io-client-1.4.32.tgz#988a65a0386c274b1c22a55377fab6a30789ac14"
+  integrity sha512-Vs55Kq8F+OWvy1RLA31rT+cAyemzgm0EWNeax6BWF8H7QiiOYMJIdcwSDdm5LVgfEkoepsWkS+40+WNb7BUMbg==
+
 "@webassemblyjs/ast@1.7.10":
   version "1.7.10"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.7.10.tgz#0cfc61d61286240b72fc522cb755613699eea40a"
