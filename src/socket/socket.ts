@@ -1,12 +1,12 @@
 import * as io from 'socket.io-client'
+const EventEmitter = require('event-emitter-es6')
 import Reaction from './../reaction/reaction.ts'
 
 /**
  * Instrument to create socket connection
  */
-export default class Socket {
+export default class Socket extends EventEmitter {
 
-  update: (reactions: Reaction[]) => void
   socket: SocketIOClient.Socket
 
   /**
@@ -16,12 +16,13 @@ export default class Socket {
    * @param {string} serverIP - IP of the server
    * @param {function} update - function which gets data and updates counters
    */
-  constructor (serverIP: string, update: (reactions: Reaction[]) => void) {
+  constructor (serverIP: string) {
 
+    super()
     this.socket = io(serverIP)
-    this.update = update
 
-    this.socket.on('message', (msg: Reaction[]) => update(msg))
+    const classPointer = this
+    this.socket.on('message', (msg: Reaction[]) => classPointer.emit('message', msg))
 
   }
 
