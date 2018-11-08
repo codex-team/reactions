@@ -1,4 +1,6 @@
-// Type of input data
+/**
+ * Type of input data
+ */
 interface PollData {
   parent: string;      // Root element
   reactions: string[]; // Array of emoji symbols
@@ -21,11 +23,17 @@ export default class Reactions {
       wrapper: 'reactions'
     };
   }
-  // Number of picked element 
+  /**
+   * Number of picked element 
+   */
   private picked: number = undefined;
-  // Array of counters elements 
+  /**
+   * Array of counters elements 
+   */
   private reactions: Array<{ counter: HTMLElement; emoji: HTMLElement }> = [];
-  // Elements holder
+  /**
+   * Elements holder
+   */
   private wrap: HTMLElement;
 
   /**
@@ -33,7 +41,7 @@ export default class Reactions {
    * @param {object} data - object containing poll emojis, title and parent element.
    * @param {string} data.parent - element where poll is inserted.
    * @param {string[]} data.reactions - list of poll emojis.
-   * @param {string} title - poll title.
+   * @param {string} data.title - poll title.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: PollData) {
