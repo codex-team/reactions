@@ -1,7 +1,20 @@
 /** Info about the reaction */
 export default class Reaction {
 
+  /**
+   * Rate of the reaction
+   *
+   * @type {number}
+   * @private
+   */
   private value: number
+  
+  /**
+   * Personal reaction of the user true or false
+   *
+   * @type {boolean}
+   * @private
+   */
   private vote: boolean
 
   /**

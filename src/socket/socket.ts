@@ -5,7 +5,12 @@ import Reaction from './../reaction/reaction.ts'
 /** Instrument to create socket connection */
 export default class Socket extends EventEmitter {
 
-  /** Socket which connects to the server */
+  /**
+   * Socket which connects to the server
+   *
+   * @type {SocketIOClient.Socket}
+   * @private
+   */
   private socket: SocketIOClient.Socket
 
   /**
