@@ -1,16 +1,11 @@
+// Type of input data
 interface PollData {
-  parent: string;
-  reactions: string[];
-  title: string;
+  parent: string;      // Root element
+  reactions: string[]; // Array of emoji symbols
+  title: string;       // Title text
 }
 interface Styles {
-  emoji: string;
-  picked: string;
-  reactionContainer: string;
-  title: string;
-  votes: string;
-  votesPicked: string;
-  wrapper: string;
+  [key: string]: string; 
 }
 /** Class perpesenting a reactions */
 export default class Reactions {
@@ -26,9 +21,13 @@ export default class Reactions {
       wrapper: 'reactions'
     };
   }
+  // Number of picked element 
   private picked: number = undefined;
+  // Array of counters elements 
   private reactions: Array<{ counter: HTMLElement; emoji: HTMLElement }> = [];
+  // Elements holder
   private wrap: HTMLElement;
+
   /**
    * Create a reactions poll.
    * @param {object} data - object containing poll emojis, title and parent element.
@@ -44,7 +43,11 @@ export default class Reactions {
     const pollTitle: HTMLElement = this.createElement('span', Reactions.CSS.title, { textContent: data.title });
 
     this.wrap.append(pollTitle);
-    data.reactions.forEach((item: string, i: number) => this.reactions.push(this.addReaction(item, i)));
+
+    data.reactions.forEach((item: string, i: number) => {
+      this.reactions.push(this.addReaction(item, i))
+    });
+
     if (parent) {
       parent.append(this.wrap);
     } else {
@@ -52,7 +55,8 @@ export default class Reactions {
     }
   }
 
-  /** create and insert reactions button
+  /** 
+   * Create and insert reactions button
    * @param {string} item - emoji from data.reactions array.
    * @param {string} i - array counter.
    * @returns {object} containing pair of emoji element and it's counter
@@ -81,7 +85,8 @@ export default class Reactions {
     return { emoji, counter };
   }
 
-  /** processing click on emoji
+  /** 
+   * Processing click on emoji
    * @param {string} index - index of reaction clicked by user.
    */
   public reactionClicked (index: number): void {
@@ -104,7 +109,8 @@ export default class Reactions {
     this.picked = undefined;
   }
 
-  /** decrease counter and remove highlight
+  /**   
+   * Decrease counter and remove highlight
    * @param {string} index - index of unvoted reaction.
    */
   public unvote (index: number): void {
@@ -117,7 +123,8 @@ export default class Reactions {
     this.reactions[index].counter.textContent = String(votes);
   }
 
-  /** increase counter and highlight emoji
+  /** 
+   * Increase counter and highlight emoji
    * @param {string} index - index of voted reaction.
    */
   public vote (index: number): void {
@@ -130,7 +137,8 @@ export default class Reactions {
     this.reactions[index].counter.textContent = String(votes);
   }
 
-  /** making creation of dom elements easier
+  /** 
+   * Making creation of dom elements easier
    * @param {string} elName - string containing tagName.
    * @param {array|string} classList - string containing classes names for new element.
    * @param {string} attrList - string containing attributes names for new element.
@@ -154,14 +162,16 @@ export default class Reactions {
     return el;
   }
 
-  /** return value of counter stored in localStorage
+  /**
+   * Return value of counter stored in localStorage
    * @param {string} key - field name in localStorage.
    */
   private getCounter (key: string): number {
     return parseInt(window.localStorage.getItem(key),10);
   }
 
-  /** set new value of counter stored in localStorage
+  /** 
+   * Set new value of counter stored in localStorage
    * @param {string} key - field name in localStorage.
    * @param {string} value - new field value.
    */
