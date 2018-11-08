@@ -43,7 +43,7 @@ export default class Reaction {
    * @return {string} - string representation
    */
   public toString (): string {
-    return this.getRate() + ' ' + this.isVoted() + '\n'
+    return '[object Reaction]';
   }
 
 }
