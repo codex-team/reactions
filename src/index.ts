@@ -1,2 +1,3 @@
 import './index.css';
-import './example/example.ts';
+import Reactions from './main.ts';
+export { Reactions };
