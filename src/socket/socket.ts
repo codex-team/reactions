@@ -12,13 +12,13 @@ export default class Socket extends EventEmitter {
    * Creates an instance of Socket
    *
    * @this {Socket}
-   * @param {string} serverIP - IP of the server
-   * @param {function} update - function which gets data and updates counters
+   * @param {string} url - a url of the server
+   * @param {function} update - a function which gets data and updates counters
    */
-  constructor (serverIP: string) {
+  constructor (url: string) {
 
     super()
-    this.socket = io(serverIP)
+    this.socket = io(url)
 
     const classPointer = this
     this.socket.on('message', (msg: Reaction[]) => classPointer.emit('message', msg))
