@@ -2,12 +2,11 @@ import * as io from 'socket.io-client'
 const EventEmitter = require('event-emitter-es6')
 import Reaction from './../reaction/reaction.ts'
 
-/**
- * Instrument to create socket connection
- */
+/** Instrument to create socket connection */
 export default class Socket extends EventEmitter {
 
-  socket: SocketIOClient.Socket
+  /** Socket which connects to the server */
+  private socket: SocketIOClient.Socket
 
   /**
    * Creates an instance of Socket

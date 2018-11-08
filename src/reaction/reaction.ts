@@ -1,6 +1,4 @@
-/**
- * Info about the reaction
- */
+/** Info about the reaction */
 export default class Reaction {
 
   private value: number
