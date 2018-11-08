@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './src/example/index.ts',
+  entry: './src/index.ts',
   output: {
     filename: './reactions.js',
     library: 'Reactions',
