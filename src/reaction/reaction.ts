@@ -8,7 +8,7 @@ export default class Reaction {
    * @private
    */
   private _rate: number
-  
+
   /**
    * True if user've already answered to this poll
    *
@@ -49,12 +49,12 @@ export default class Reaction {
 
   /**
    * Calculates string representation of the Reaction
-   * 
+   *
    * @override
    * @return {string} - string representation
    */
   public toString (): string {
-    return '[object Reaction]';
+    return '[object Reaction]'
   }
 
 }

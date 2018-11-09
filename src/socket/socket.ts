@@ -25,7 +25,7 @@ export default class Socket extends EventEmitter {
     super()
     this.socket = io(url)
 
-    this.socket.on('message', (msg: Reaction[]) => this.emit('message', msg))
+    this.socket.on('message', message)
 
   }
 
@@ -33,10 +33,21 @@ export default class Socket extends EventEmitter {
    * Sends index of the reaction to the server
    *
    * @this {Socket}
-   * @this {number} index - index of the reaction
+   * @param {number} index - index of the reaction
    */
   send (index: number): void {
     this.socket.send(index)
+  }
+
+  /**
+   * Calls 'message' event
+   *
+   * @this {Socket}
+   * @param {Reaction[]} reactions - an array with info about reactions
+   * @private
+   */
+  private message (reactions: Reaction[]): void {
+    this.emit('message', reactions)
   }
 
 }
