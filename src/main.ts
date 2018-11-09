@@ -54,10 +54,10 @@ export default class Reactions {
 
   /**
    * Create a reactions poll.
-   * @param {object} data - object containing poll emojis, title and parent element.
-   * @param {string} data.parent - element where poll is inserted.
-   * @param {string[]} data.reactions - list of poll emojis.
-   * @param {string} data.title - poll title.
+   * @param {object} data - object containing emojis, title and parent element.
+   * @param {string} data.parent - element where module is inserted.
+   * @param {string[]} data.reactions - list of emojis.
+   * @param {string} data.title - title.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionConfig) {
@@ -88,7 +88,7 @@ export default class Reactions {
   public addReaction (item: any, i: number): { counter: HTMLElement; emoji: HTMLElement } {
     const reactionContainer: HTMLElement = this.createElement('div', Reactions.CSS.reactionContainer);
     const emoji: HTMLElement = this.createElement('div', Reactions.CSS.emoji, {
-      textContent: String.fromCodePoint(item)
+      textContent: item
     });
     const storageKey: string = 'reactionIndex' + i;
 
