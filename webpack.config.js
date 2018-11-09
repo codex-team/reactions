@@ -1,9 +1,11 @@
+
 module.exports = {
   entry: './src/index.ts',
   output: {
     filename: './reactions.js',
     library: 'Reactions',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    libraryExport: 'default'
   },
     module: {
     rules: [
