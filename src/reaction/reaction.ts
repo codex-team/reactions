@@ -10,23 +10,23 @@ export default class Reaction {
   private _rate: number
   
   /**
-   * Personal reaction of the user true or false
+   * True if user've already answered to this poll
    *
    * @type {boolean}
    * @private
    */
-  private _vote: boolean
+  private _voted: boolean
 
   /**
    * Creates an instance of Reaction
    *
    * @this {Reaction}
    * @param {number} rate - value of the counter
-   * @param {boolean} vote - reaction of the user
+   * @param {boolean} voted - reaction of the user
    */
-  constructor (rate: number, vote: boolean) {
+  constructor (rate: number, voted: boolean) {
     this._rate = rate
-    this._vote = vote
+    this._voted = voted
   }
 
   /**
@@ -43,8 +43,8 @@ export default class Reaction {
    *
    * @return {boolean} - the vote of the user
    */
-  public get vote (): boolean {
-    return this._vote
+  public get voted (): boolean {
+    return this._voted
   }
 
   /**
