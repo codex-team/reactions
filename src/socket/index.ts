@@ -1,6 +1,6 @@
 import * as io from 'socket.io-client'
 const EventEmitter = require('event-emitter-es6')
-import Reaction from './../reaction/reaction.ts'
+import Reaction from './../reaction/index.ts'
 
 /** Instrument to create socket connection */
 export default class Socket extends EventEmitter {
@@ -18,14 +18,13 @@ export default class Socket extends EventEmitter {
    *
    * @this {Socket}
    * @param {string} url - a url of the server
-   * @param {function} update - a function which gets data and updates counters
    */
   constructor (url: string) {
 
     super()
     this.socket = io(url)
 
-    this.socket.on('message', message)
+    this.socket.on('message', (msg: Reaction[]) => this.message(msg))
 
   }
 
@@ -46,7 +45,7 @@ export default class Socket extends EventEmitter {
    * @param {Reaction[]} reactions - an array with info about reactions
    * @private
    */
-  private message (reactions: Reaction[]): void {
+  private message (reactions: Reaction[]) {
     this.emit('message', reactions)
   }
 
