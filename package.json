@@ -20,8 +20,10 @@
   },
   "homepage": "https://github.com/codex-team/reactions#readme",
   "devDependencies": {
+    "@types/md5": "^2.1.33",
     "@types/node": "^10.12.1",
     "css-loader": "^1.0.1",
+    "md5": "^2.2.1",
     "style-loader": "^0.23.1",
     "ts-loader": "^5.3.0",
     "tslint": "^5.11.0",

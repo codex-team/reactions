@@ -1,13 +1,17 @@
 /**
  * Type of input data
  */
+import Identifier from "./identifier";
+
 interface ReactionConfig {
   /** Selector of root element */
   parent: string;      
   /** Array of emoji symbols */
   reactions: string[];
   /** Title text */
-  title: string; 
+  title: string;
+  /** Id for module */
+  id?: string;
 }
 
 /** 
@@ -19,7 +23,7 @@ interface Styles {
 
 /**
  * @class Reactions
- * @classdesc Perpesenting a reactions
+ * @classdesc Representing a reactions
  */
 export default class Reactions {
   /**  
@@ -53,11 +57,17 @@ export default class Reactions {
   private wrap: HTMLElement;
 
   /**
+   * Module identifier
+   */
+  private id: string;
+
+  /**
    * Create a reactions poll.
    * @param {object} data - object containing emojis, title and parent element.
    * @param {string} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
    * @param {string} data.title - title.
+   * @param {string} data.id - module identifier.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionConfig) {
@@ -66,14 +76,16 @@ export default class Reactions {
 
     const pollTitle: HTMLElement = this.createElement('span', Reactions.CSS.title, { textContent: data.title });
 
-    this.wrap.append(pollTitle);
+    this.wrap.appendChild(pollTitle);
 
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i))
     });
 
+    this.setIdentifier(data.id);
+
     if (parent) {
-      parent.append(this.wrap);
+      parent.appendChild(this.wrap);
     } else {
       throw new Error('Parent element is not found');
     }
@@ -102,9 +114,9 @@ export default class Reactions {
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
 
-    reactionContainer.append(emoji);
-    reactionContainer.append(counter);
-    this.wrap.append(reactionContainer);
+    reactionContainer.appendChild(emoji);
+    reactionContainer.appendChild(counter);
+    this.wrap.appendChild(reactionContainer);
 
     return { emoji, counter };
   }
@@ -203,4 +215,14 @@ export default class Reactions {
   private setCounter (key: string, value: string | number): void {
     window.localStorage.setItem(key, String(value));
   }
+
+  /**
+   * Create instance of Identifier and set user id or
+   * URL hash as Reactions id
+   * @param idValue {string} - Value to be used as Reactions id
+   */
+  private setIdentifier (idValue?: string) {
+    this.id = new Identifier(idValue).id;
+  }
 }
+
