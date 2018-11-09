@@ -1,17 +1,27 @@
 /**
  * Type of input data
  */
-interface PollData {
+interface Reaction {
   parent: string;      // Root element
   reactions: string[]; // Array of emoji symbols
   title: string;       // Title text
 }
+
+/** 
+ * Type of style holder
+ */
 interface Styles {
   [key: string]: string; 
 }
-/** Class perpesenting a reactions */
+
+/**
+ * @class Reactions
+ * @classdesc Perpesenting a reactions
+ */
 export default class Reactions {
-  /** returns style name */
+  /**  
+   * Returns style name 
+   */
   public static get CSS (): Styles {
     return {
       emoji: 'counter__emoji',
@@ -23,14 +33,17 @@ export default class Reactions {
       wrapper: 'reactions'
     };
   }
+
   /**
    * Number of picked element 
    */
   private picked: number = undefined;
+
   /**
    * Array of counters elements 
    */
   private reactions: Array<{ counter: HTMLElement; emoji: HTMLElement }> = [];
+
   /**
    * Elements holder
    */
@@ -44,7 +57,7 @@ export default class Reactions {
    * @param {string} data.title - poll title.
    * @throws Will throw an error if parent element is not found.
    */
-  public constructor (data: PollData) {
+  public constructor (data: Reaction) {
     this.wrap = this.createElement('div', Reactions.CSS.wrapper);
     const parent: HTMLElement = document.querySelector(data.parent);
 
@@ -97,14 +110,15 @@ export default class Reactions {
    * Processing click on emoji
    * @param {string} index - index of reaction clicked by user.
    */
-  public reactionClicked (index: number): void {
-    if (this.picked === undefined) { /** If there is no previously picked reaction */
+  public reactionClicked(index: number): void {
+    /** If there is no previously picked reaction */
+    if (this.picked === undefined) {
       this.vote(index);
       this.picked = index;
       return;
     }
-
-    if (this.picked !== index) { /** If clicked reaction and previosly picked reaction are not the same */
+    /** If clicked reaction and previosly picked reaction are not the same */
+    if (this.picked !== index) { 
       this.vote(index);
       this.unvote(this.picked);
       this.picked = index;
