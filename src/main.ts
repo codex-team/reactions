@@ -55,7 +55,7 @@ export default class Reactions {
   private wrap: HTMLElement;
 
   /**
-   * Create a reactions poll.
+   * Create a reactions module.
    * @param {object} data - object containing emojis, title and parent element.
    * @param {string} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
