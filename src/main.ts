@@ -114,9 +114,9 @@ export default class Reactions {
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
 
-    reactionContainer.appendChild(emoji);
-    reactionContainer.appendChild(counter);
-    this.wrap.appendChild(reactionContainer);
+    reactionContainer.append(emoji);
+    reactionContainer.append(counter);
+    this.wrap.append(reactionContainer);
 
     return { emoji, counter };
   }
