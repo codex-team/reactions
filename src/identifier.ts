@@ -6,7 +6,7 @@ import * as md5 from 'md5';
  */
 export default class Identifier {
 
-  public id: string;
+  private id: string;
   /**
    * Create an identifier for Reactions module
    * If id is undefined, URL will be hashed with md5 and used as id
@@ -33,7 +33,7 @@ export default class Identifier {
    * @returns {string}
    */
   public toJSON() {
-    return `{"id": "${this.id}"}`;
+    return this.id;
   }
 
   /**

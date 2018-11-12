@@ -11,7 +11,7 @@ interface ReactionConfig {
   /** Title text */
   title: string;
   /** Id for module */
-  id?: string;
+  id?: string | number;
 }
 
 /** 
@@ -59,7 +59,7 @@ export default class Reactions {
   /**
    * Module identifier
    */
-  private id: string;
+  private id: Identifier;
 
   /**
    * Create a reactions poll.
@@ -67,7 +67,7 @@ export default class Reactions {
    * @param {string} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
    * @param {string} data.title - title.
-   * @param {string} data.id - module identifier.
+   * @param {string | number} data.id - module identifier.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionConfig) {
@@ -76,16 +76,16 @@ export default class Reactions {
 
     const pollTitle: HTMLElement = this.createElement('span', Reactions.CSS.title, { textContent: data.title });
 
-    this.wrap.appendChild(pollTitle);
+    this.wrap.append(pollTitle);
 
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i))
     });
 
-    this.id = new Identifier(data.id).toString();
+    this.id = new Identifier(data.id);
 
     if (parent) {
-      parent.appendChild(this.wrap);
+      parent.append(this.wrap);
     } else {
       throw new Error('Parent element is not found');
     }
