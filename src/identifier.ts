@@ -27,4 +27,20 @@ export default class Identifier {
   private getURL(): string {
     return document.location.href;
   }
+
+  /**
+   * Returns instance of Identifier in JSON.
+   * @returns {string}
+   */
+  public toJSON() {
+    return `{"id": "${this.id}"}`;
+  }
+
+  /**
+   * Returns instance of Identifier in string.
+   * @returns {string}
+   */
+  public toString() {
+    return this.id;
+  }
 }

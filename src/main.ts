@@ -82,7 +82,7 @@ export default class Reactions {
       this.reactions.push(this.addReaction(item, i))
     });
 
-    this.setIdentifier(data.id);
+    this.id = new Identifier(data.id).toString();
 
     if (parent) {
       parent.appendChild(this.wrap);
@@ -214,15 +214,6 @@ export default class Reactions {
    */
   private setCounter (key: string, value: string | number): void {
     window.localStorage.setItem(key, String(value));
-  }
-
-  /**
-   * Create instance of Identifier and set user id or
-   * URL hash as Reactions id
-   * @param idValue {string} - Value to be used as Reactions id
-   */
-  private setIdentifier (idValue?: string) {
-    this.id = new Identifier(idValue).id;
   }
 }
 
