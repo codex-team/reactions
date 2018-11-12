@@ -1,11 +1,13 @@
 /**
  * Type of input data
  */
-interface ReactionConfig {
+interface ReactionsConfig {
   /** Selector of root element */
   parent: string;      
+
   /** Array of emoji symbols */
   reactions: string[];
+
   /** Title text */
   title: string; 
 }
@@ -60,7 +62,7 @@ export default class Reactions {
    * @param {string} data.title - title.
    * @throws Will throw an error if parent element is not found.
    */
-  public constructor (data: ReactionConfig) {
+  public constructor (data: ReactionsConfig) {
     this.wrap = this.createElement('div', Reactions.CSS.wrapper);
     const parent: HTMLElement = document.querySelector(data.parent);
 
