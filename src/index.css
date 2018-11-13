@@ -1,8 +1,10 @@
+$grey: #8b8b8b;
+
 .reactions {
   display: flex;
   flex-flow: row;
   justify-content: center;
-  color: #8b8b8b;
+  color: $grey;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
