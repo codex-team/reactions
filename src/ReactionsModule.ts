@@ -10,6 +10,9 @@ interface ReactionsConfig {
 
   /** Title text */
   title: string; 
+
+  /** Module id */
+  id?: number;
 }
 
 /** 
@@ -39,6 +42,7 @@ export default class Reactions {
     };
   }
 
+  private id: number;
   /**
    * Number of picked element 
    */
@@ -63,6 +67,9 @@ export default class Reactions {
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
+    this.id = data.id;
+    if (!isNaN(this.getCounter('module ' + this.id))) this.picked = this.getCounter('module ' + this.id);
+
     this.wrap = this.createElement('div', Reactions.CSS.wrapper);
     const parent: HTMLElement = document.querySelector(data.parent);
 
@@ -71,7 +78,7 @@ export default class Reactions {
     this.wrap.append(pollTitle);
 
     data.reactions.forEach((item: string, i: number) => {
-      this.reactions.push(this.addReaction(item, i))
+      this.reactions.push(this.addReaction(item, i));
     });
 
     if (parent) {
@@ -79,6 +86,9 @@ export default class Reactions {
     } else {
       throw new Error('Parent element is not found');
     }
+
+    /** Set selected value */
+    window.addEventListener('unload', () => { this.setCounter('module ' + this.id, this.picked) });
   }
 
   /** 
@@ -92,7 +102,8 @@ export default class Reactions {
     const emoji: HTMLElement = this.createElement('div', Reactions.CSS.emoji, {
       textContent: item
     });
-    const storageKey: string = 'reactionIndex' + i;
+    if (this.picked === i)emoji.classList.add(Reactions.CSS.picked);
+    const storageKey: string = this.id+'reactionIndex' + i;
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
     let votes: number = this.getCounter(storageKey);
@@ -103,6 +114,7 @@ export default class Reactions {
     }
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
+    if (this.picked===i) counter.classList.add(Reactions.CSS.votesPicked);
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
@@ -141,7 +153,7 @@ export default class Reactions {
    * @param {string} index - index of unvoted reaction.
    */
   public unvote (index: number): void {
-    const storageKey: string = 'reactionIndex' + index;
+    const storageKey: string = this.id +'reactionIndex' + index;
     const votes: number = this.getCounter(storageKey) - 1;
 
     this.reactions[index].emoji.classList.remove(Reactions.CSS.picked);
@@ -155,7 +167,7 @@ export default class Reactions {
    * @param {string} index - index of voted reaction.
    */
   public vote (index: number): void {
-    const storageKey: string = 'reactionIndex' + index;
+    const storageKey: string = this.id + 'reactionIndex' + index;
     const votes: number = this.getCounter(storageKey) + 1;
 
     this.reactions[index].emoji.classList.add(Reactions.CSS.picked);
