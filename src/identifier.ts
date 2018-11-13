@@ -16,7 +16,7 @@ export default class Identifier {
     if (id === undefined) {
       this.id = md5(this.getURL());
     } else {
-      this.id = id;
+      this.id = md5(id);
     }
   }
 
@@ -29,18 +29,18 @@ export default class Identifier {
   }
 
   /**
-   * Returns instance of Identifier in JSON.
+   * Returns string representation of Identifier for JSON serializing
    * @returns {string}
    */
-  public toJSON() {
+  public toJSON(): string {
     return this.id;
   }
 
   /**
-   * Returns instance of Identifier in string.
+   * Returns string representation of Identifier
    * @returns {string}
    */
-  public toString() {
+  public toString(): string {
     return this.id;
   }
 }
