@@ -13,11 +13,7 @@ export default class Identifier {
    * @param id {string} - User id for Reactions module.
    */
   public constructor (id) {
-    if (id === undefined) {
-      this.id = md5(this.getURL());
-    } else {
-      this.id = md5(id);
-    }
+    this.id = md5(id || this.getURL());
   }
 
   /**
