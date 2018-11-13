@@ -1,15 +1,16 @@
 /**
  * Type of input data
  */
-import Identifier from "./identifier";
-
-interface ReactionConfig {
+interface ReactionsConfig {
   /** Selector of root element */
   parent: string;      
+
   /** Array of emoji symbols */
   reactions: string[];
+
   /** Title text */
-  title: string;
+  title: string; 
+
   /** Id for module */
   id?: string | number;
 }
@@ -62,7 +63,7 @@ export default class Reactions {
   private id: Identifier;
 
   /**
-   * Create a reactions poll.
+   * Create a reactions module.
    * @param {object} data - object containing emojis, title and parent element.
    * @param {string} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
@@ -70,7 +71,7 @@ export default class Reactions {
    * @param {string | number} data.id - module identifier.
    * @throws Will throw an error if parent element is not found.
    */
-  public constructor (data: ReactionConfig) {
+  public constructor (data: ReactionsConfig) {
     this.wrap = this.createElement('div', Reactions.CSS.wrapper);
     const parent: HTMLElement = document.querySelector(data.parent);
 
@@ -216,4 +217,3 @@ export default class Reactions {
     window.localStorage.setItem(key, String(value));
   }
 }
-

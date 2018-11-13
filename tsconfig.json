@@ -1,6 +1,13 @@
 {
+<<<<<<< HEAD
 	"compilerOptions": {
 		"target": "es2017",
 		"sourceMap": true
 	}
+=======
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "es5"
+  }
+>>>>>>> 59be0fcf8389ab9441fa81ea314d2237fe7b4cc4
 }
