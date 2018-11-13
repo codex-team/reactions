@@ -10,6 +10,9 @@ interface ReactionsConfig {
 
   /** Title text */
   title: string; 
+
+  /** Id for module */
+  id?: string | number;
 }
 
 /** 
@@ -21,7 +24,7 @@ interface Styles {
 
 /**
  * @class Reactions
- * @classdesc Perpesenting a reactions
+ * @classdesc Representing a reactions
  */
 export default class Reactions {
   /**  
@@ -55,11 +58,17 @@ export default class Reactions {
   private wrap: HTMLElement;
 
   /**
+   * Module identifier
+   */
+  private id: Identifier;
+
+  /**
    * Create a reactions module.
    * @param {object} data - object containing emojis, title and parent element.
    * @param {string} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
    * @param {string} data.title - title.
+   * @param {string | number} data.id - module identifier.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
@@ -73,6 +82,8 @@ export default class Reactions {
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i))
     });
+
+    this.id = new Identifier(data.id);
 
     if (parent) {
       parent.append(this.wrap);
