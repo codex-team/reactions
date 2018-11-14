@@ -1,3 +1,4 @@
+import Identifier from './identifier.ts';
 /**
  * Type of input data
  */
@@ -27,6 +28,9 @@ interface Styles {
  * @classdesc Representing a reactions
  */
 export default class Reactions {
+  /** User id */
+  private static userId: number = Reactions.getCounter('userId');
+
   /**  
    * Returns style name 
    */
@@ -40,6 +44,31 @@ export default class Reactions {
       votesPicked: 'counter__votes--picked',
       wrapper: 'reactions'
     };
+  }
+
+  /**
+   * Return value of counter stored in localStorage
+   * @param {string} key - field name in localStorage.
+   */
+  private static getCounter(key: string): number {
+    return parseInt(window.localStorage.getItem(key), 10);
+  }
+
+  /** 
+   * Set new value of counter stored in localStorage
+   * @param {string} key - field name in localStorage.
+   * @param {string} value - new field value.
+   */
+  private static setCounter(key: string, value: string | number): void {
+    window.localStorage.setItem(key, String(value));
+  }
+
+  /**
+   * Set userId 
+   * @param {number} userId
+   */
+  public static setUserId(userId: number) {
+    this.userId = userId
   }
 
   /**
@@ -79,17 +108,22 @@ export default class Reactions {
 
     this.wrap.append(pollTitle);
 
-    data.reactions.forEach((item: string, i: number) => {
-      this.reactions.push(this.addReaction(item, i))
-    });
-
     this.id = new Identifier(data.id);
+
+    data.reactions.forEach((item: string, i: number) => {
+      this.reactions.push(this.addReaction(item, i));
+    });
 
     if (parent) {
       parent.append(this.wrap);
     } else {
       throw new Error('Parent element is not found');
     }
+
+    /** Set user id on close page */
+    window.addEventListener('unload', () => {
+      Reactions.setCounter('userId', Reactions.userId);
+    });
   }
 
   /** 
@@ -106,11 +140,11 @@ export default class Reactions {
     const storageKey: string = 'reactionIndex' + i;
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
-    let votes: number = this.getCounter(storageKey);
+    let votes: number = Reactions.getCounter(storageKey);
 
     if (!votes) {
       votes = 0;
-      this.setCounter(storageKey, votes);
+      Reactions.setCounter(storageKey, votes);
     }
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
@@ -153,10 +187,10 @@ export default class Reactions {
    */
   public unvote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = this.getCounter(storageKey) - 1;
+    const votes: number = Reactions.getCounter(storageKey) - 1;
 
     this.reactions[index].emoji.classList.remove(Reactions.CSS.picked);
-    this.setCounter(storageKey, votes);
+    Reactions.setCounter(storageKey, votes);
     this.reactions[index].counter.classList.remove(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
@@ -167,10 +201,10 @@ export default class Reactions {
    */
   public vote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = this.getCounter(storageKey) + 1;
+    const votes: number = Reactions.getCounter(storageKey) + 1;
 
     this.reactions[index].emoji.classList.add(Reactions.CSS.picked);
-    this.setCounter(storageKey, votes);
+    Reactions.setCounter(storageKey, votes);
     this.reactions[index].counter.classList.add(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
@@ -198,22 +232,5 @@ export default class Reactions {
       }
     }
     return el;
-  }
-
-  /**
-   * Return value of counter stored in localStorage
-   * @param {string} key - field name in localStorage.
-   */
-  private getCounter (key: string): number {
-    return parseInt(window.localStorage.getItem(key),10);
-  }
-
-  /** 
-   * Set new value of counter stored in localStorage
-   * @param {string} key - field name in localStorage.
-   * @param {string} value - new field value.
-   */
-  private setCounter (key: string, value: string | number): void {
-    window.localStorage.setItem(key, String(value));
   }
 }
