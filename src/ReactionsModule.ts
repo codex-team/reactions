@@ -1,3 +1,4 @@
+import Identifier from './identifier.ts';
 /**
  * Type of input data
  */
@@ -24,13 +25,13 @@ interface Styles {
 
 /**
  * @class Reactions
- * @classdesc Perpesenting a reactions
+ * @classdesc Representing a reactions
  */
 export default class Reactions {
   /** User id */
   private static userId: number = Reactions.getCounter('userId');
 
-  /**
+  /**  
    * Returns style name 
    */
   public static get CSS (): Styles {
@@ -61,7 +62,7 @@ export default class Reactions {
   private static setCounter(key: string, value: string | number): void {
     window.localStorage.setItem(key, String(value));
   }
-  
+
   /**
    * Set userId 
    * @param {number} userId
@@ -69,7 +70,7 @@ export default class Reactions {
   public static setUserId(userId: number) {
     this.userId = userId
   }
-   
+
   /**
    * Number of picked element 
    */
@@ -86,11 +87,17 @@ export default class Reactions {
   private wrap: HTMLElement;
 
   /**
+   * Module identifier
+   */
+  private id: Identifier;
+
+  /**
    * Create a reactions module.
    * @param {object} data - object containing emojis, title and parent element.
    * @param {string} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
    * @param {string} data.title - title.
+   * @param {string | number} data.id - module identifier.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
@@ -104,6 +111,8 @@ export default class Reactions {
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i));
     });
+
+    this.id = new Identifier(data.id);
 
     if (parent) {
       parent.append(this.wrap);
@@ -128,7 +137,6 @@ export default class Reactions {
     const emoji: HTMLElement = this.createElement('div', Reactions.CSS.emoji, {
       textContent: item
     });
-    if (this.picked === i)emoji.classList.add(Reactions.CSS.picked);
     const storageKey: string = 'reactionIndex' + i;
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
@@ -140,7 +148,6 @@ export default class Reactions {
     }
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
-    if (this.picked===i) counter.classList.add(Reactions.CSS.votesPicked);
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
