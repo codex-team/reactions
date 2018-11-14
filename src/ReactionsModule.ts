@@ -114,6 +114,8 @@ export default class Reactions {
       this.reactions.push(this.addReaction(item, i));
     });
 
+    this.id = new Identifier(data.id);
+
     if (parent) {
       parent.append(this.wrap);
     } else {
