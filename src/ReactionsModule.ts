@@ -31,8 +31,7 @@ export default class Reactions {
   /**
    *  User id for save user reaction
    */
-  private static userId: number | string = localStorage.getItem('reactionsUserId') ||
-    window.crypto.getRandomValues(new Uint32Array(1))[0];
+  private static userId: number | string = localStorage.getItem('reactionsUserId') || Reactions.getRandomValue();
 
   /**
    * Returns style name
@@ -49,6 +48,12 @@ export default class Reactions {
     };
   }
 
+  /**
+   * Return random number
+   */
+  private static getRandomValue (): number {
+    return window.crypto.getRandomValues(new Uint32Array(1))[0];
+  }
   /**
    * Return value of counter stored in localStorage
    * @param {string} key - field name in localStorage.
