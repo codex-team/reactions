@@ -28,7 +28,7 @@ interface Styles {
  */
 export default class Reactions {
   /** User id */
-  static userId: number = Reactions.getCounter('userId');
+  private static userId: number = Reactions.getCounter('userId');
 
   /**
    * Returns style name 
@@ -49,7 +49,7 @@ export default class Reactions {
    * Return value of counter stored in localStorage
    * @param {string} key - field name in localStorage.
    */
-  static getCounter(key: string): number {
+  private static getCounter(key: string): number {
     return parseInt(window.localStorage.getItem(key), 10);
   }
 
@@ -58,7 +58,7 @@ export default class Reactions {
    * @param {string} key - field name in localStorage.
    * @param {string} value - new field value.
    */
-  static setCounter(key: string, value: string | number): void {
+  private static setCounter(key: string, value: string | number): void {
     window.localStorage.setItem(key, String(value));
   }
   
@@ -66,7 +66,7 @@ export default class Reactions {
    * Set userId
    * @param {number} userId
    */
-  static setUserId(userId: number) {
+  public static setUserId(userId: number) {
     this.userId = userId
   }
   
