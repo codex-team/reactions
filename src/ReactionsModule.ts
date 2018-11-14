@@ -29,10 +29,10 @@ interface Styles {
  */
 export default class Reactions {
   /**
-   *  User id for save user reaction*
+   *  User id for save user reaction
    */
   private static userId: number | string = localStorage.getItem('reactionsUserId') ||
-    window.crypto.getRandomValues(new Int32Array(1))[0];
+    window.crypto.getRandomValues(new Uint32Array(1))[0];
 
   /**
    * Returns style name
