@@ -51,10 +51,11 @@ export default class Reactions {
    * @param {string} key - field name in localStorage.
    */
   private static loadValue (key: string): number | string {
-    if (isNaN(parseInt(window.localStorage.getItem(key), 10))) {
-      return localStorage.getItem(key);
+    const value: string = window.localStorage.getItem(key);
+    if (isNaN(parseInt(value, 10))) {
+      return value;
     }
-    return parseInt(window.localStorage.getItem(key), 10);
+    return parseInt(value, 10);
   }
 
   /**
