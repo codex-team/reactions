@@ -29,7 +29,7 @@ interface Styles {
  */
 export default class Reactions {
   /** User id */
-  private static userId: number = Reactions.getCounter('userId');
+  private static userId: number = Reactions.loadValue('userId');
 
   /**  
    * Returns style name 
@@ -50,7 +50,7 @@ export default class Reactions {
    * Return value of counter stored in localStorage
    * @param {string} key - field name in localStorage.
    */
-  private static getCounter(key: string): number {
+  private static loadValue(key: string): number {
     return parseInt(window.localStorage.getItem(key), 10);
   }
 
@@ -59,7 +59,7 @@ export default class Reactions {
    * @param {string} key - field name in localStorage.
    * @param {string} value - new field value.
    */
-  private static setCounter(key: string, value: string | number): void {
+  private static saveValue(key: string, value: string | number): void {
     window.localStorage.setItem(key, String(value));
   }
 
@@ -68,7 +68,7 @@ export default class Reactions {
    * @param {number} userId
    */
   public static setUserId(userId: number) {
-    this.userId = userId
+    Reactions.userId = userId
   }
 
   /**
@@ -114,8 +114,6 @@ export default class Reactions {
       this.reactions.push(this.addReaction(item, i));
     });
 
-    this.id = new Identifier(data.id);
-
     if (parent) {
       parent.append(this.wrap);
     } else {
@@ -123,9 +121,7 @@ export default class Reactions {
     }
 
     /** Set user id on close page */
-    window.addEventListener('unload', () => {
-      Reactions.setCounter('userId', Reactions.userId);
-    });
+    Reactions.saveValue('userId', Reactions.userId);
   }
 
   /** 
@@ -142,11 +138,11 @@ export default class Reactions {
     const storageKey: string = 'reactionIndex' + i;
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
-    let votes: number = Reactions.getCounter(storageKey);
+    let votes: number = Reactions.loadValue(storageKey);
 
     if (!votes) {
       votes = 0;
-      Reactions.setCounter(storageKey, votes);
+      Reactions.saveValue(storageKey, votes);
     }
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
@@ -189,10 +185,10 @@ export default class Reactions {
    */
   public unvote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = Reactions.getCounter(storageKey) - 1;
+    const votes: number = Reactions.loadValue(storageKey) - 1;
 
     this.reactions[index].emoji.classList.remove(Reactions.CSS.picked);
-    Reactions.setCounter(storageKey, votes);
+    Reactions.saveValue(storageKey, votes);
     this.reactions[index].counter.classList.remove(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
@@ -203,10 +199,10 @@ export default class Reactions {
    */
   public vote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = Reactions.getCounter(storageKey) + 1;
+    const votes: number = Reactions.loadValue(storageKey) + 1;
 
     this.reactions[index].emoji.classList.add(Reactions.CSS.picked);
-    Reactions.setCounter(storageKey, votes);
+    Reactions.saveValue(storageKey, votes);
     this.reactions[index].counter.classList.add(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
