@@ -108,6 +108,8 @@ export default class Reactions {
 
     this.wrap.append(pollTitle);
 
+    this.id = new Identifier(data.id);
+
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i));
     });
