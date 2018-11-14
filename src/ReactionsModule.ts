@@ -1,25 +1,26 @@
+import Identifier from './identifier.ts';
 /**
  * Type of input data
  */
 interface ReactionsConfig {
   /** Selector of root element */
-  parent: string;      
+  parent: string;
 
   /** Array of emoji symbols */
   reactions: string[];
 
   /** Title text */
-  title: string; 
+  title: string;
 
   /** Id for module */
   id?: string | number;
 }
 
-/** 
+/**
  * Type of style holder
  */
 interface Styles {
-  [key: string]: string; 
+  [key: string]: string;
 }
 
 /**
@@ -27,8 +28,13 @@ interface Styles {
  * @classdesc Representing a reactions
  */
 export default class Reactions {
-  /**  
-   * Returns style name 
+  /**
+   *  User id for save user reaction
+   */
+  private static userId: number | string = localStorage.getItem('reactionsUserId') || Reactions.getRandomValue();
+
+  /**
+   * Returns style name
    */
   public static get CSS (): Styles {
     return {
@@ -43,12 +49,48 @@ export default class Reactions {
   }
 
   /**
-   * Number of picked element 
+   * Return random number
+   */
+  private static getRandomValue (): number {
+    return window.crypto.getRandomValues(new Uint32Array(1))[0];
+  }
+  /**
+   * Return value of counter stored in localStorage
+   * @param {string} key - field name in localStorage.
+   */
+  private static loadValue (key: string): number | string {
+    const value: string = window.localStorage.getItem(key);
+
+    if (isNaN(parseInt(value, 10))) {
+      return value;
+    }
+    return parseInt(value, 10);
+  }
+
+  /**
+   * Set new value of counter stored in localStorage
+   * @param {string} key - field name in localStorage.
+   * @param {string} value - new field value.
+   */
+  private static saveValue (key: string, value: string | number): void {
+    window.localStorage.setItem(key, String(value));
+  }
+
+  /**
+   * Set userId
+   * @param {number} userId
+   */
+  public static setUserId (userId: number) {
+    Reactions.userId = userId;
+  }
+
+  /**
+   * Number of picked element
    */
   private picked: number = undefined;
 
   /**
-   * Array of counters elements 
+   * Array of counters elements
    */
   private reactions: Array<{ counter: HTMLElement; emoji: HTMLElement }> = [];
 
@@ -79,20 +121,23 @@ export default class Reactions {
 
     this.wrap.append(pollTitle);
 
-    data.reactions.forEach((item: string, i: number) => {
-      this.reactions.push(this.addReaction(item, i))
-    });
-
     this.id = new Identifier(data.id);
+
+    data.reactions.forEach((item: string, i: number) => {
+      this.reactions.push(this.addReaction(item, i));
+    });
 
     if (parent) {
       parent.append(this.wrap);
     } else {
       throw new Error('Parent element is not found');
     }
+
+    /** Set user id on close page */
+    localStorage.setItem('reactionsUserId', String(Reactions.userId));
   }
 
-  /** 
+  /**
    * Create and insert reactions button
    * @param {string} item - emoji from data.reactions array.
    * @param {string} i - array counter.
@@ -106,11 +151,11 @@ export default class Reactions {
     const storageKey: string = 'reactionIndex' + i;
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
-    let votes: number = this.getCounter(storageKey);
+    let votes: number = <number> Reactions.loadValue(storageKey);
 
     if (!votes) {
       votes = 0;
-      this.setCounter(storageKey, votes);
+      Reactions.saveValue(storageKey, votes);
     }
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
@@ -122,11 +167,11 @@ export default class Reactions {
     return { emoji, counter };
   }
 
-  /** 
+  /**
    * Processing click on emoji
    * @param {string} index - index of reaction clicked by user.
    */
-  public reactionClicked(index: number): void {
+  public reactionClicked (index: number): void {
     /** If there is no previously picked reaction */
     if (this.picked === undefined) {
       this.vote(index);
@@ -134,7 +179,7 @@ export default class Reactions {
       return;
     }
     /** If clicked reaction and previosly picked reaction are not the same */
-    if (this.picked !== index) { 
+    if (this.picked !== index) {
       this.vote(index);
       this.unvote(this.picked);
       this.picked = index;
@@ -147,35 +192,35 @@ export default class Reactions {
     this.picked = undefined;
   }
 
-  /**   
+  /**
    * Decrease counter and remove highlight
    * @param {string} index - index of unvoted reaction.
    */
   public unvote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = this.getCounter(storageKey) - 1;
+    const votes: number = <number> Reactions.loadValue(storageKey) - 1;
 
     this.reactions[index].emoji.classList.remove(Reactions.CSS.picked);
-    this.setCounter(storageKey, votes);
+    Reactions.saveValue(storageKey, votes);
     this.reactions[index].counter.classList.remove(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
 
-  /** 
+  /**
    * Increase counter and highlight emoji
    * @param {string} index - index of voted reaction.
    */
   public vote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = this.getCounter(storageKey) + 1;
+    const votes: number = <number> Reactions.loadValue(storageKey) + 1;
 
     this.reactions[index].emoji.classList.add(Reactions.CSS.picked);
-    this.setCounter(storageKey, votes);
+    Reactions.saveValue(storageKey, votes);
     this.reactions[index].counter.classList.add(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
 
-  /** 
+  /**
    * Making creation of dom elements easier
    * @param {string} elName - string containing tagName.
    * @param {array|string} classList - string containing classes names for new element.
@@ -198,22 +243,5 @@ export default class Reactions {
       }
     }
     return el;
-  }
-
-  /**
-   * Return value of counter stored in localStorage
-   * @param {string} key - field name in localStorage.
-   */
-  private getCounter (key: string): number {
-    return parseInt(window.localStorage.getItem(key),10);
-  }
-
-  /** 
-   * Set new value of counter stored in localStorage
-   * @param {string} key - field name in localStorage.
-   * @param {string} value - new field value.
-   */
-  private setCounter (key: string, value: string | number): void {
-    window.localStorage.setItem(key, String(value));
   }
 }
