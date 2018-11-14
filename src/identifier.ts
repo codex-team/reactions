@@ -1,5 +1,3 @@
-import * as md5 from 'md5';
-
 /**
  * @class Identifier
  * @classdesc Representing identifier for Reactions module
@@ -13,7 +11,7 @@ export default class Identifier {
    * @param id {string} - User id for Reactions module.
    */
   public constructor (id) {
-    this.id = md5(id || this.getURL());
+    this.id = id || this.getURL();
   }
 
   /**
