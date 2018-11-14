@@ -1,5 +1,5 @@
 import Identifier from './identifier.ts';
-import md5 from 'md5';
+import * as md5 from 'md5';
 /**
  * Type of input data
  */
@@ -32,7 +32,7 @@ export default class Reactions {
   /**
    *  User id for connect with server*
    */
-  private static userId: number | string = localStorage.getItem('userId') || md5(Math.random());
+  private static userId: number | string = localStorage.getItem('StorageUserId') || md5(String(Math.random()));
 
   /**
    * Returns style name
@@ -129,7 +129,7 @@ export default class Reactions {
     }
 
     /** Set user id on close page */
-    Reactions.saveValue('userId', Reactions.userId);
+    localStorage.setItem('StorageUserId', String(Reactions.userId));
   }
 
   /**
