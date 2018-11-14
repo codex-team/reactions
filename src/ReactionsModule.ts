@@ -1,4 +1,5 @@
 import Identifier from './identifier.ts';
+import md5 from 'md5';
 /**
  * Type of input data
  */
@@ -28,8 +29,10 @@ interface Styles {
  * @classdesc Representing a reactions
  */
 export default class Reactions {
-  /** User id */
-  private static userId: number | string = Reactions.loadValue('userId');
+  /**
+   *  User id for connect with server*
+   */
+  private static userId: number | string = localStorage.getItem('userId') || md5(Math.random());
 
   /**
    * Returns style name
@@ -52,6 +55,7 @@ export default class Reactions {
    */
   private static loadValue (key: string): number | string {
     const value: string = window.localStorage.getItem(key);
+
     if (isNaN(parseInt(value, 10))) {
       return value;
     }
