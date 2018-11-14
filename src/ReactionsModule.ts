@@ -29,7 +29,7 @@ interface Styles {
  */
 export default class Reactions {
   /** User id */
-  private static userId: number = Reactions.loadValue('userId');
+  private static userId: number = <number>Reactions.loadValue('userId');
 
   /**  
    * Returns style name 
@@ -50,8 +50,10 @@ export default class Reactions {
    * Return value of counter stored in localStorage
    * @param {string} key - field name in localStorage.
    */
-  private static loadValue(key: string): number {
-    return parseInt(window.localStorage.getItem(key), 10);
+  private static loadValue(key: string): number | string {
+    if (parseInt(window.localStorage.getItem(key), 10) !== NaN)
+      return parseInt(window.localStorage.getItem(key), 10)
+    return localStorage.getItem(key)
   }
 
   /** 
@@ -138,7 +140,7 @@ export default class Reactions {
     const storageKey: string = 'reactionIndex' + i;
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
-    let votes: number = Reactions.loadValue(storageKey);
+    let votes: number = <number>Reactions.loadValue(storageKey);
 
     if (!votes) {
       votes = 0;
@@ -185,7 +187,7 @@ export default class Reactions {
    */
   public unvote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = Reactions.loadValue(storageKey) - 1;
+    const votes: number = <number>Reactions.loadValue(storageKey) - 1;
 
     this.reactions[index].emoji.classList.remove(Reactions.CSS.picked);
     Reactions.saveValue(storageKey, votes);
@@ -199,7 +201,7 @@ export default class Reactions {
    */
   public vote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = Reactions.loadValue(storageKey) + 1;
+    const votes: number = <number>Reactions.loadValue(storageKey) + 1;
 
     this.reactions[index].emoji.classList.add(Reactions.CSS.picked);
     Reactions.saveValue(storageKey, votes);
