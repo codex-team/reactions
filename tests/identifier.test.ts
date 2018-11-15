@@ -1,12 +1,11 @@
 import {describe, it} from 'mocha';
 import {expect} from 'chai';
 import Identifier from '../src/identifier';
-import * as jsdom from 'jsdom';
-const {JSDOM} = jsdom;
+import {JSDOM} from 'jsdom';
 
 
-describe('Identifier class', function () {
-  describe('Should create identifier instance with given string id', function () {
+describe('Identifier class', () =>  {
+  describe('Should create identifier instance with given string id', () =>  {
     const stringId: string = 'test id';
     const identifier: Identifier = new Identifier(stringId);
 
@@ -19,7 +18,7 @@ describe('Identifier class', function () {
     });
   });
 
-  describe('Should create identifier instance with given number id', function () {
+  describe('Should create identifier instance with given number id', () =>  {
     const numberId: number = 1111;
     const identifier: Identifier = new Identifier(numberId);
 
@@ -32,7 +31,7 @@ describe('Identifier class', function () {
     });
   });
 
-  describe('Should create identifier instance by url', function () {
+  describe('Should create identifier instance by url', () => {
     const testUrl = 'http://testurl.com/test';
     const dom = new JSDOM(``, {url: testUrl});
     // @ts-ignore
