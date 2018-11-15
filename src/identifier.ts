@@ -10,7 +10,7 @@ export default class Identifier {
    * If id is undefined, URL will be hashed with md5 and used as id
    * @param id {string} - User id for Reactions module.
    */
-  public constructor (id) {
+  public constructor (id?) {
     this.id = id || this.getURL();
   }
 

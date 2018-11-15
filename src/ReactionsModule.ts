@@ -1,4 +1,11 @@
-import Identifier from './identifier.ts';
+import Identifier from './identifier';
+/**
+ * Type of style holder
+ */
+interface Styles {
+  [key: string]: string;
+}
+
 /**
  * Type of input data
  */
@@ -10,21 +17,10 @@ interface ReactionsConfig {
   reactions: string[];
 
   /** Title text */
-<<<<<<< HEAD:src/main.ts
-  title: string; 
-=======
   title: string;
->>>>>>> 18ee1f149f831a9aad920f94adf4c4c8fc72a881:src/ReactionsModule.ts
 
   /** Id for module */
   id?: string | number;
-}
-
-/**
- * Type of style holder
- */
-interface Styles {
-  [key: string]: string;
 }
 
 /**
