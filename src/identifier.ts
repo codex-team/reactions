@@ -18,7 +18,7 @@ export default class Identifier {
    * Returns URL, where this Reactions module located
    * @returns {string}
    */
-  private getURL(): string {
+  private getURL (): string {
     return document.location.href;
   }
 
@@ -26,7 +26,7 @@ export default class Identifier {
    * Returns string representation of Identifier for JSON serializing
    * @returns {string}
    */
-  public toJSON(): string {
+  public toJSON (): string {
     return this.id;
   }
 
@@ -34,7 +34,7 @@ export default class Identifier {
    * Returns string representation of Identifier
    * @returns {string}
    */
-  public toString(): string {
+  public toString (): string {
     return this.id;
   }
 }

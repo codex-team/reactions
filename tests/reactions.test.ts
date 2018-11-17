@@ -69,6 +69,18 @@ describe('Reactions module', () => {
       expect(testReactions).to.be.an.instanceOf(Reactions);
     });
 
+    it('should throw an error if parent is undefined', () => {
+      const wrongData = {
+        parent: '.wrong-parent-element',
+        title: 'Test title',
+        reactions: ['👍', '👎', '🤙'],
+        id: 'Test id'
+      };
+
+      const wrongReactions = function () { new Reactions(wrongData); };
+      expect(wrongReactions).to.throw(Error, 'Parent element is not found');
+    });
+
     it('parent element should contain wrapper for module', () => {
       assert.equal(parent.getElementsByClassName(Reactions.CSS.wrapper)[0], wrapper);
     });
@@ -88,7 +100,7 @@ describe('Reactions module', () => {
   });
 
   describe('setUserId', () => {
-    it('should set used id', () => {
+    it('should set given id', () => {
       assert.equal(localStorage.getItem('reactionsUserId'), String(testUserId));
     });
   });
