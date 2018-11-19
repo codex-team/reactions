@@ -4,13 +4,13 @@
  */
 export default class Identifier {
 
-  private id: string;
+  private id: string | number;
   /**
    * Create an identifier for Reactions module
    * If id is undefined, URL will be hashed with md5 and used as id
    * @param id {string} - User id for Reactions module.
    */
-  public constructor (id?) {
+  public constructor (id?: string | number) {
     this.id = id || this.getURL();
   }
 
@@ -27,7 +27,7 @@ export default class Identifier {
    * @returns {string}
    */
   public toJSON (): string {
-    return this.id;
+    return String(this.id);
   }
 
   /**
@@ -35,6 +35,6 @@ export default class Identifier {
    * @returns {string}
    */
   public toString (): string {
-    return this.id;
+    return String(this.id);
   }
 }

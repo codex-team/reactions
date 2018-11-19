@@ -8,7 +8,7 @@
     "build:watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "lint": "tslint ./src/**/*.ts --fix",
-    "test": "nyc mocha ./tests/*.test.ts"
+    "test": "nyc mocha --require ts-node/register ./tests/*.test.ts"
   },
   "repository": {
     "type": "git",
