@@ -37,10 +37,10 @@
       background-color: $background-color;
     }
     
-    &--picked{
-      font-weight: 600;
-    }
-    
+  }
+
+  &__votes--picked{
+    font-weight: 600;
   }
 
   &:hover {
