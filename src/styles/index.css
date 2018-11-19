@@ -12,38 +12,38 @@
     font-size: 15px;
     letter-spacing: 0.1px;
   }
-}
 
-.counter {
-  display: flex;
-  align-items: center;
-  margin: 0 10px;
 
-  &__emoji {
-    display: inline-flex;
+  &__counter {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    margin-right: 11px;
-    border: solid 1px $border-color;
-    border-radius: 35px;
-    box-sizing: border-box;
-    font-size: 16px;
-    cursor: pointer;
-    
-    &--picked {
-      background-color: $background-color;
+    margin: 0 10px;
+
+    &__emoji {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      margin-right: 11px;
+      border: solid 1px $border-color;
+      border-radius: 35px;
+      box-sizing: border-box;
+      font-size: 16px;
+      cursor: pointer;
+      
+      &--picked {
+        background-color: $background-color;
+      }
+      
+      &:hover {
+        box-shadow: 0px 0px 7px 1px $shadow-color;
+      }
+
     }
-    
-    &:hover {
-      box-shadow: 0px 0px 7px 1px $shadow-color;
+
+    &__votes--picked{
+      font-weight: 600;
     }
-
   }
-
-  &__votes--picked{
-    font-weight: 600;
-  }
-
 }
