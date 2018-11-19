@@ -2,7 +2,6 @@
 
 .reactions {
   display: flex;
-  flex-flow: row;
   justify-content: center;
   color: $grey;
   font-family: $font-stack;
