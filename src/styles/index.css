@@ -19,7 +19,7 @@
     align-items: center;
     margin: 0 10px;
 
-    &__emoji {
+    &-emoji {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -42,7 +42,7 @@
 
     }
 
-    &__votes--picked{
+    &-votes--picked{
       font-weight: 600;
     }
   }

@@ -38,12 +38,12 @@ export default class Reactions {
    */
   public static get CSS (): Styles {
     return {
-      emoji: 'reactions__counter__emoji',
-      picked: 'reactions__counter__emoji--picked',
+      emoji: 'reactions__counter-emoji',
+      picked: 'reactions__counter-emoji--picked',
       reactionContainer: 'reactions__counter',
       title: 'reactions__title',
-      votes: 'reactions__counter__votes',
-      votesPicked: 'reactions__counter__votes--picked',
+      votes: 'reactions__counter-votes',
+      votesPicked: 'reactions__counter-votes--picked',
       wrapper: 'reactions'
     };
   }
