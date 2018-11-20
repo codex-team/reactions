@@ -14,7 +14,7 @@ Download script from this github repository
 ```
 new Reactions({parent: '', title: '', reactions: []});
 ```
-where\
+where
 
 | name      | type   | description                                       |
 |-----------|--------|---------------------------------------------------|
@@ -39,7 +39,8 @@ in this case instance should be created this way
 new Reactions({parent: '', title: '', reactions: [], id: ''});
 ```
 
-where\
+where
+
 | name | type            | description     |
 |------|-----------------|-----------------|
 |id    |string or number |module identifier|
