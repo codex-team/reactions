@@ -15,17 +15,21 @@ Download script from this github repository
 new Reactions({parent: '', title: '', reactions: []});
 ```
 where\
+
 | name      | type   | description                                       |
 |-----------|--------|---------------------------------------------------|
 |parent     |string  |element in which module should be inserted - string|
 |title      |string  |module title                                       |
 |reactions  |string[]|array of emojis to be inserted in module options   |
+
 **example:**
 ```
 new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
 ```
 ### Advanced settings
+
 By default module takes page URL as module identifier, but it also can be specified manually by passing id to reactions constructor\
+
 use it for:
 * lists (different modules on one page)
 * binding module to a specific content item, regardless of URL
@@ -34,6 +38,7 @@ in this case instance should be created this way
 ```
 new Reactions({parent: '', title: '', reactions: [], id: ''});
 ```
+
 where\
 | name | type            | description     |
 |------|-----------------|-----------------|
