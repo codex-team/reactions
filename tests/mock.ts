@@ -1,4 +1,5 @@
 import { JSDOM } from 'jsdom';
+import * as wcrypto from '@trust/webcrypto';
 
 // Storage Mock
 function storageMock () {
@@ -25,7 +26,8 @@ function storageMock () {
 }
 
 function domMock () {
-  let dom = new JSDOM(`<!doctype html><html><body><div class="parent-element"/></div></body></html>`, { url: 'http://test.test' });
+  let dom = new JSDOM(`<!doctype html><html><body><div class="parent-element"/></div></body></html>`,
+    { url: 'http://test.test' });
 // @ts-ignore
   global.window = dom.window;
 // @ts-ignore
@@ -34,6 +36,8 @@ function domMock () {
   window.crypto = wcrypto;
 // @ts-ignore
   global.localStorage = storageMock();
+
+  // localStorage.setItem('reactionsUserId', String(1111));
 }
 
 export { storageMock, domMock };

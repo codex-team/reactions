@@ -1,16 +1,41 @@
-import * as wcrypto from '@trust/webcrypto';
 import { describe, it, before, after } from 'mocha';
 import { expect, assert } from 'chai';
 import { domMock } from './mock';
 
 describe('Reactions module', () => {
   let Reactions;
+  let testData;
+  let testReactions;
+
+  let parent: Element;
+  let wrapper: Element;
+  let title: Element;
+  let counter: HTMLCollection;
+  let emoji: HTMLCollection;
+  let votes: HTMLCollection;
 
   before(function () {
     domMock();
-    console.log(require('../src/ReactionsModule'));
 
     Reactions = require('../src/ReactionsModule').default;
+
+    testData = {
+      parent: '.parent-element',
+      title: 'Test title',
+      reactions: ['👍', '👎', '🤙'],
+      id: 'Test id'
+    };
+    // @ts-ignore
+    testReactions = new Reactions(testData);
+
+    testData.parent = 'parent-element';
+
+    parent = document.getElementsByClassName(testData.parent)[0];
+    wrapper = document.getElementsByClassName(Reactions.CSS.wrapper)[0];
+    title = document.getElementsByClassName(Reactions.CSS.title)[0];
+    counter = document.getElementsByClassName(Reactions.CSS.reactionContainer);
+    emoji = document.getElementsByClassName(Reactions.CSS.emoji);
+    votes = document.getElementsByClassName(Reactions.CSS.votes);
   });
 
   after(() => {
@@ -24,24 +49,7 @@ describe('Reactions module', () => {
     delete global.crypto;
   });
 
-  const testData = {
-    parent: '.parent-element',
-    title: 'Test title',
-    reactions: ['👍', '👎', '🤙'],
-    id: 'Test id'
-  };
-
-  const testReactions = new Reactions(testData);
-  testData.parent = 'parent-element';
-  const parent: Element = document.getElementsByClassName(testData.parent)[0];
-  const wrapper: Element = document.getElementsByClassName(Reactions.CSS.wrapper)[0];
-  const title: Element = document.getElementsByClassName(Reactions.CSS.title)[0];
-  const counter: HTMLCollection = document.getElementsByClassName(Reactions.CSS.reactionContainer);
-  const emoji: HTMLCollection = document.getElementsByClassName(Reactions.CSS.emoji);
-  const votes: HTMLCollection = document.getElementsByClassName(Reactions.CSS.votes);
-
   describe('Constructor', () => {
-
     it('should create an instance of Reactions', () => {
       expect(testReactions).to.be.an.instanceOf(Reactions);
     });
@@ -53,8 +61,8 @@ describe('Reactions module', () => {
         reactions: ['👍', '👎', '🤙'],
         id: 'Test id'
       };
-
       const wrongReactions = function () { new Reactions(wrongData); };
+
       expect(wrongReactions).to.throw(Error, 'Parent element is not found');
     });
 
@@ -67,7 +75,7 @@ describe('Reactions module', () => {
       assert.equal(title.textContent, testData.title);
     });
 
-    it(`wrapper should contain ${testData.reactions.length} reactions with emoji and counters`, () => {
+    it(`wrapper should contain reactions with emoji and counters`, () => {
       testData.reactions.forEach((item: string, i: number) => {
 
         assert.equal(counter[i].getElementsByClassName(Reactions.CSS.votes)[0], votes[i]);
@@ -86,9 +94,9 @@ describe('Reactions module', () => {
 
   describe('reactionClicked', () => {
     let testIndex: number = 0;
-    testReactions.reactionClicked(testIndex);
 
     it('should correctly process firstly picked reaction', () => {
+      testReactions.reactionClicked(testIndex);
 
       const emojiCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.emoji)[0];
       const votesCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.votes)[0];
@@ -98,9 +106,10 @@ describe('Reactions module', () => {
     });
 
     it('should correctly process another reaction', () => {
-      const testPicked: number = 0;
-      testIndex = 1;
-      testReactions.reactionClicked(1);
+      const testPicked: number = testIndex;
+
+      testIndex += 1;
+      testReactions.reactionClicked(testIndex);
 
       const emojiCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.emoji)[0];
       const votesCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.votes)[0];
@@ -114,13 +123,10 @@ describe('Reactions module', () => {
       assert.isOk(votesCurrent.classList.contains(Reactions.CSS.votesPicked));
 
       assert.equal(document.getElementsByClassName(Reactions.CSS.picked).length, 1);
-
     });
 
     it('should correctly process again picked reaction', () => {
       testReactions.reactionClicked(testIndex);
-
-      console.log(document.getElementsByClassName(Reactions.CSS.picked).length);
 
       const emojiList = counter[testIndex].getElementsByClassName(Reactions.CSS.emoji);
       const votesList = counter[testIndex].getElementsByClassName(Reactions.CSS.votes);
@@ -128,6 +134,5 @@ describe('Reactions module', () => {
       assert.isNotOk(emojiList[0].classList.contains(Reactions.CSS.picked));
       assert.isNotOk(votesList[0].classList.contains(Reactions.CSS.votesPicked));
     });
-
   });
 });
