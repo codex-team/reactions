@@ -14,6 +14,7 @@ where\
 parent - element in which poll should be inserted\
 title - poll title\
 reactions - array of emojis to be inserted in poll options\
+\
 **example:**
 ```
 new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
