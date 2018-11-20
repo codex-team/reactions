@@ -39,12 +39,12 @@ export default class Reactions {
    */
   public static get CSS (): Styles {
     return {
-      emoji: 'counter__emoji',
-      picked: 'counter__emoji--picked',
-      reactionContainer: 'counter',
+      emoji: 'reactions__counter-emoji',
+      picked: 'reactions__counter-emoji--picked',
+      reactionContainer: 'reactions__counter',
       title: 'reactions__title',
-      votes: 'counter__votes',
-      votesPicked: 'counter__votes--picked',
+      votes: 'reactions__counter-votes',
+      votesPicked: 'reactions__counter-votes--picked',
       wrapper: 'reactions'
     };
   }
