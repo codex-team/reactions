@@ -1,14 +1,18 @@
 # Reactions
+
 Light-weight module for gathering users' feedback on a webpage content
 Allows to build in element, containing buttons - emojis for expressing attitude to a content
 
 ## Getting started
 
 ### Installing 
+
 Download script from this github repository
+
 ## Usage
 
 ### Simplified initialization
+
 * connect reactions.js to your html page in script tag
 * create instance of Reactions using 
 ```
@@ -23,12 +27,13 @@ where
 |reactions  |string[]|array of emojis to be inserted in module options   |
 
 **example:**
+
 ```
 new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
 ```
 ### Advanced settings
 
-By default module takes page URL as module identifier, but it also can be specified manually by passing id to reactions constructor\
+By default module takes page URL as module identifier, but it also can be specified manually by passing id to reactions constructor
 
 use it for:
 * lists (different modules on one page)
