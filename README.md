@@ -13,7 +13,10 @@ new Reactions({parent: '', title: '', reactions: []});
 where parent - element in which poll should be inserted
       title - poll title
       reactions - array of emojis to be inserted in poll options
-example: new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
+**example:**
+```
+new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
+```
 ### Advanced settings
 Reactions constructor can also accept module identifier  - id
 in this case instance should be created this way:\
