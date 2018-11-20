@@ -35,6 +35,11 @@ export default class Reactions {
   public static userId: number | string = localStorage.getItem('reactionsUserId') || Reactions.getRandomValue();
 
   /**
+   * Class for connection
+   */
+  private static socket: Socket = new Socket('localhost');
+
+  /**
    * Returns style name
    */
   public static get CSS (): Styles {
@@ -89,8 +94,6 @@ export default class Reactions {
    */
   private reactions: Array<{ counter: HTMLElement; emoji: HTMLElement }> = [];
 
-  private static socket: Socket = new Socket('localhost');
-
   /**
    * Elements holder
    */
@@ -111,11 +114,13 @@ export default class Reactions {
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
+    /** Connect with server */
     Reactions.socket.send({
       'moduleId': this.id,
       'userId': Reactions.userId
     });
 
+    /** Get picked reaction */
     Reactions.socket.subscribe('message',(msg: any) => {
       if (msg.id === this.id) {
         this.picked = msg.votedReactionId;
@@ -162,6 +167,7 @@ export default class Reactions {
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes);
+    /** Get count cf votes */
     Reactions.socket.subscribe('message',(msg: any) => {
       if (msg.id === this.id) {
         counter.textContent = msg.reactions[i];
