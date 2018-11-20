@@ -15,20 +15,22 @@ Download script from this github repository
 new Reactions({parent: '', title: '', reactions: []});
 ```
 where\
-**parent** - element in which module should be inserted\
-**title** - module title\
-**reactions** - array of emojis to be inserted in module options\
+**parent** - element in which module should be inserted - string\
+**title** - module title - string\
+**reactions** - array of emojis to be inserted in module options - string[]\
 \
 **example:**
 ```
 new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
 ```
 ### Advanced settings
-Reactions constructor can also accept module identifier  - id
+By default module takes page url as module identifier, but it also can be specified manually by passing id to reactions constructor
 in this case instance should be created this way:\
 ```
 new Reactions({parent: '', title: '', reactions: [], id: ''});
 ```
+where\
+id - module identifier - string | number
 
 
 
