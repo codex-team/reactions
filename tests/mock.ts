@@ -49,6 +49,6 @@ function deleteMock () {
   delete global.localStorage;
   // @ts-ignore
   delete global.crypto;
-};
+}
 
 export { storageMock, domMock, deleteMock };

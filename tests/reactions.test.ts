@@ -14,7 +14,7 @@ describe('Reactions module', () => {
   let emoji: HTMLCollection;
   let votes: HTMLCollection;
 
-  before(function () {
+  before(() => {
     domMock();
 
     Reactions = require('../src/ReactionsModule').default;
@@ -25,7 +25,7 @@ describe('Reactions module', () => {
       reactions: ['👍', '👎', '🤙'],
       id: 'Test id'
     };
-    // @ts-ignore
+
     testReactions = new Reactions(testData);
 
     testData.parent = 'parent-element';
@@ -81,7 +81,6 @@ describe('Reactions module', () => {
   describe('Check UserId', () => {
     it('should set random id', () => {
       assert.isOk(localStorage.getItem('reactionsUserId'));
-      console.log(localStorage.getItem('reactionsUserId'));
     });
   });
 

@@ -6,11 +6,10 @@ describe('setUserId', () => {
   let Reactions;
   let testData;
   let testReactions;
+  const testUserId: number = 1111;
 
   before(() => {
     domMock();
-
-    localStorage.setItem('reactionsUserId', String(1111));
 
     Reactions = require('../src/ReactionsModule').default;
   });
@@ -27,10 +26,10 @@ describe('setUserId', () => {
       id: 'Test id'
     };
 
-    // @ts-ignore
+    Reactions.setUserId(testUserId);
     testReactions = new Reactions(testData);
 
     console.log(localStorage.getItem('reactionsUserId'));
-    assert.isOk(localStorage.getItem('reactionsUserId'));
+    assert.equal(localStorage.getItem('reactionsUserId'), String(testUserId));
   });
 });

@@ -226,15 +226,11 @@ export default class Reactions {
    * @param {array|string} classList - string containing classes names for new element.
    * @param {string} attrList - string containing attributes names for new element.
    */
-  private createElement (elName: string, classList?: string[] | string, attrList?: object): HTMLElement {
+  private createElement (elName: string, classList?: string, attrList?: object): HTMLElement {
     const el: HTMLElement = document.createElement(elName);
 
     if (classList) {
-      if (Array.isArray(classList)) {
-        el.classList.add(...classList);
-      } else {
-        el.classList.add(classList);
-      }
+      el.classList.add(classList);
     }
 
     for (const attrName in attrList) {
