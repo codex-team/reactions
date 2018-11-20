@@ -15,9 +15,9 @@ Download script from this github repository
 new Reactions({parent: '', title: '', reactions: []});
 ```
 where\
-**parent** - element in which poll should be inserted\
-**title** - poll title\
-**reactions** - array of emojis to be inserted in poll options\
+**parent** - element in which module should be inserted\
+**title** - module title\
+**reactions** - array of emojis to be inserted in module options\
 \
 **example:**
 ```
