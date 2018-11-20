@@ -1,6 +1,6 @@
 import { describe, it, before, after } from 'mocha';
 import { expect, assert } from 'chai';
-import { domMock } from './mock';
+import { domMock, deleteMock } from './mock';
 
 describe('Reactions module', () => {
   let Reactions;
@@ -39,14 +39,7 @@ describe('Reactions module', () => {
   });
 
   after(() => {
-    // @ts-ignore
-    delete global.window;
-    // @ts-ignore
-    delete global.document;
-    // @ts-ignore
-    delete global.localStorage;
-    // @ts-ignore
-    delete global.crypto;
+    deleteMock();
   });
 
   describe('Constructor', () => {

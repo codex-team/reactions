@@ -40,4 +40,15 @@ function domMock () {
   // localStorage.setItem('reactionsUserId', String(1111));
 }
 
-export { storageMock, domMock };
+function deleteMock () {
+  // @ts-ignore
+  delete global.window;
+  // @ts-ignore
+  delete global.document;
+  // @ts-ignore
+  delete global.localStorage;
+  // @ts-ignore
+  delete global.crypto;
+};
+
+export { storageMock, domMock, deleteMock };

@@ -1,6 +1,6 @@
-import {after, before, describe, it} from 'mocha';
+import { after, before, describe, it } from 'mocha';
 import { expect } from 'chai';
-import { domMock } from './mock';
+import { domMock, deleteMock } from './mock';
 
 describe('Identifier class', () => {
   let Identifier;
@@ -12,14 +12,7 @@ describe('Identifier class', () => {
   });
 
   after(() => {
-    // @ts-ignore
-    delete global.window;
-    // @ts-ignore
-    delete global.document;
-    // @ts-ignore
-    delete global.localStorage;
-    // @ts-ignore
-    delete global.crypto;
+    deleteMock();
   });
 
   describe('Should create identifier instance with given string id', () => {
