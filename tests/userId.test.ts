@@ -29,7 +29,6 @@ describe('setUserId', () => {
     Reactions.setUserId(testUserId);
     testReactions = new Reactions(testData);
 
-    console.log(localStorage.getItem('reactionsUserId'));
     assert.equal(localStorage.getItem('reactionsUserId'), String(testUserId));
   });
 });

@@ -37,7 +37,6 @@ function domMock () {
 // @ts-ignore
   global.localStorage = storageMock();
 
-  // localStorage.setItem('reactionsUserId', String(1111));
 }
 
 function deleteMock () {
