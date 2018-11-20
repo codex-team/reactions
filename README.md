@@ -1,6 +1,6 @@
 # Reactions
-Light-weight reactions module
-Allows to build in buttons with reactions - emojis in order to gain users' feedback on a webpage
+Light-weight module for gathering users' feedback on a webpage content
+Allows to build in element, containing buttons - emojis for expressing attitude to a content
 
 ## Getting started
 
@@ -15,23 +15,29 @@ Download script from this github repository
 new Reactions({parent: '', title: '', reactions: []});
 ```
 where\
-**parent** - element in which module should be inserted - string\
-**title** - module title - string\
-**reactions** - array of emojis to be inserted in module options - string[]\
-\
+| name      | type   | description                                       |
+|-----------|--------|---------------------------------------------------|
+|parent     |string  |element in which module should be inserted - string|
+|title      |string  |module title                                       |
+|reactions  |string[]|array of emojis to be inserted in module options   |
 **example:**
 ```
 new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
 ```
 ### Advanced settings
-By default module takes page url as module identifier, but it also can be specified manually by passing id to reactions constructor\
-(for example - case of one module, built in several pages with different urls)\
+By default module takes page URL as module identifier, but it also can be specified manually by passing id to reactions constructor\
+use it for:
+* lists (different modules on one page)
+* binding module to a specific content item, regardless of URL
+
 in this case instance should be created this way
 ```
 new Reactions({parent: '', title: '', reactions: [], id: ''});
 ```
 where\
-**id** - module identifier - string | number
+| name | type            | description     |
+|------|-----------------|-----------------|
+|id    |string or number |module identifier|
 
 
 
