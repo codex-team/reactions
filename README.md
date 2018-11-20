@@ -1,5 +1,6 @@
 # Reactions
 Light-weight reactions module
+Allows to build in buttons with reactions - emojis in order to gain users' feedback on a webpage
 ## Getting started
 ### Installing 
 Download script from this github repository or add via npm (in work)
