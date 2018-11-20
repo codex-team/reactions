@@ -13,7 +13,7 @@ where parent - element in which poll should be inserted
 example: new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
 ### Advanced settings
 Reactions constructor can also accept module identifier  - id
-in this case instance should be created this way: 
+in this case instance should be created this way:\
 new Reactions({parent: '', title: '', reactions: [], id: ''});
 
 
