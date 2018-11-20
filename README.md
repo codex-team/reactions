@@ -24,13 +24,13 @@ where\
 new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
 ```
 ### Advanced settings
-By default module takes page url as module identifier, but it also can be specified manually by passing id to reactions constructor
+By default module takes page url as module identifier, but it also can be specified manually by passing id to reactions constructor (for example - case of one module, built in several pages with different urls) 
 in this case instance should be created this way:\
 ```
 new Reactions({parent: '', title: '', reactions: [], id: ''});
 ```
 where\
-id - module identifier - string | number
+**id** - module identifier - string | number
 
 
 
