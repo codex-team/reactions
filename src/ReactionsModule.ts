@@ -1,5 +1,5 @@
 import Identifier from './identifier.ts';
-import Socket from './socket/index';
+import Socket from './socket/index.ts';
 /**
  * Type of input data
  */
@@ -35,9 +35,14 @@ export default class Reactions {
   public static userId: number | string = localStorage.getItem('reactionsUserId') || Reactions.getRandomValue();
 
   /**
+   * URl of server
+   */
+  public static serverURL: string = 'localhost:3000';
+
+  /**
    * Class for connection
    */
-  private static socket: Socket = new Socket('localhost');
+  private static socket: Socket = new Socket(Reactions.serverURL);
 
   /**
    * Returns style name
@@ -121,11 +126,14 @@ export default class Reactions {
     });
 
     /** Get picked reaction */
-    Reactions.socket.subscribe('message',(msg: any) => {
+    Reactions.socket.socket.on('new message',(msg: any) => {
+      console.log(msg);
       if (msg.id === this.id) {
         this.picked = msg.votedReactionId;
         this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
         this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
+        msg.reactions.forEach((value,index) =>
+          this.reactions[index].counter.textContent = value);
       }
     });
 
@@ -167,12 +175,6 @@ export default class Reactions {
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
 
     const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes);
-    /** Get count cf votes */
-    Reactions.socket.subscribe('message',(msg: any) => {
-      if (msg.id === this.id) {
-        counter.textContent = msg.reactions[i];
-      }
-    });
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
