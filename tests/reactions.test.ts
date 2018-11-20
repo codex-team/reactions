@@ -1,46 +1,17 @@
 import * as wcrypto from '@trust/webcrypto';
-import { JSDOM } from 'jsdom';
 import { describe, it, before, after } from 'mocha';
 import { expect, assert } from 'chai';
-
-// Storage Mock
-function storageMock () {
-  const storage = {};
-
-  return {
-    setItem: (key, value) => {
-      storage[key] = value || '';
-    },
-    getItem: (key) => {
-      return key in storage ? storage[key] : null;
-    },
-    removeItem: (key) => {
-      delete storage[key];
-    },
-    get length () {
-      return Object.keys(storage).length;
-    },
-    key: (i) => {
-      const keys = Object.keys(storage);
-      return keys[i] || null;
-    }
-  };
-}
-
-let dom = new JSDOM(`<!doctype html><html><body><div class="parent-element"/></div></body></html>`, { url: 'http://test.test' });
-// @ts-ignore
-global.window = dom.window;
-// @ts-ignore
-global.document = dom.window.document;
-// @ts-ignore
-window.crypto = wcrypto;
-// @ts-ignore
-global.localStorage = storageMock();
-
-import Reactions from '../src/ReactionsModule';
+import { domMock } from './mock';
 
 describe('Reactions module', () => {
-  // before(() => {});
+  let Reactions;
+
+  before(function () {
+    domMock();
+    console.log(require('../src/ReactionsModule'));
+
+    Reactions = require('../src/ReactionsModule').default;
+  });
 
   after(() => {
     // @ts-ignore
@@ -53,9 +24,6 @@ describe('Reactions module', () => {
     delete global.crypto;
   });
 
-  // const testUserId: string = '1111';
-  // localStorage.setItem('reactionsUserId', testUserId);
-
   const testData = {
     parent: '.parent-element',
     title: 'Test title',
@@ -63,7 +31,7 @@ describe('Reactions module', () => {
     id: 'Test id'
   };
 
-  let testReactions = new Reactions(testData);
+  const testReactions = new Reactions(testData);
   testData.parent = 'parent-element';
   const parent: Element = document.getElementsByClassName(testData.parent)[0];
   const wrapper: Element = document.getElementsByClassName(Reactions.CSS.wrapper)[0];
