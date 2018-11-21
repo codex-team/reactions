@@ -39,7 +39,7 @@ Module uses userId property to identify user - by default userId is random numbe
 |-------|------ |----------------|
 |userId |number |user identifier |
 
-**example*
+**example**
 
 ```
   Reactions.setUserId(1);
