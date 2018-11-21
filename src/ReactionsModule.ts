@@ -122,20 +122,19 @@ export default class Reactions {
   public constructor (data: ReactionsConfig) {
     /** Connect with server */
     Reactions.socket.send({
-      'type' : 'new module',
+      'type' : 'initialization',
       'moduleId': this.id,
       'userId': Reactions.userId
     });
 
     /** Get picked reaction */
     Reactions.socket.socket.on('new message',(msg: any) => {
-      console.log(msg);
       if (msg.id === this.id) {
-        this.picked = msg.votedReactionId;
-        this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
-        this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
-        msg.reactions.forEach((value,index) =>
-          this.reactions[index].counter.textContent = value);
+        switch (msg.type) {
+          case 'update':
+            this.update(msg);
+            break;
+        }
       }
     });
 
@@ -160,6 +159,14 @@ export default class Reactions {
 
     /** Set user id on close page */
     localStorage.setItem('reactionsUserId', String(Reactions.userId));
+  }
+
+  private update (msg: any) {
+    this.picked = msg.votedReactionId;
+    this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
+    this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
+    msg.reactions.forEach((value, index) =>
+      this.reactions[index].counter.textContent = value);
   }
 
   /**
