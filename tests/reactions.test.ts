@@ -1,6 +1,7 @@
 import { describe, it, before, after } from 'mocha';
 import { expect, assert } from 'chai';
 import { domMock, deleteMock } from './mock';
+import DOM from '../src/utils/dom';
 
 describe('Reactions module', () => {
   let Reactions;
@@ -82,6 +83,19 @@ describe('Reactions module', () => {
   describe('Check UserId', () => {
     it('should set random id', () => {
       assert.isOk(localStorage.getItem('reactionsUserId'));
+    });
+  });
+
+  describe('DOM.make', () => {
+    it('should correctly create elements with multiple classes', () => {
+      const testClassList: string[] = ['test1', 'test2', 'test3'];
+      const testElement: HTMLElement = DOM.makeElement('div', testClassList);
+
+      console.log(testElement.classList, testClassList);
+      assert.equal(testElement.classList.length, testClassList.length);
+      for (const i in testClassList) {
+        assert.equal(testElement.classList[i], testClassList[i]);
+      }
     });
   });
 

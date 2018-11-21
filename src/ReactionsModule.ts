@@ -1,4 +1,6 @@
 import Identifier from './identifier';
+import DOM from './utils/dom';
+
 /**
  * Type of style holder
  */
@@ -114,10 +116,10 @@ export default class Reactions {
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
-    this.wrap = this.createElement('div', Reactions.CSS.wrapper);
+    this.wrap = DOM.make('div', Reactions.CSS.wrapper);
     const parent: HTMLElement = document.querySelector(data.parent);
 
-    const pollTitle: HTMLElement = this.createElement('span', Reactions.CSS.title, { textContent: data.title });
+    const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
 
     this.wrap.append(pollTitle);
 
@@ -144,8 +146,8 @@ export default class Reactions {
    * @returns {object} containing pair of emoji element and it's counter
    */
   public addReaction (item: any, i: number): { counter: HTMLElement; emoji: HTMLElement } {
-    const reactionContainer: HTMLElement = this.createElement('div', Reactions.CSS.reactionContainer);
-    const emoji: HTMLElement = this.createElement('div', Reactions.CSS.emoji, {
+    const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
+    const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
       textContent: item
     });
     const storageKey: string = 'reactionIndex' + i;
@@ -158,7 +160,7 @@ export default class Reactions {
       Reactions.saveValue(storageKey, votes);
     }
 
-    const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes, { textContent: votes });
+    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: votes });
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
@@ -226,18 +228,18 @@ export default class Reactions {
    * @param {array|string} classList - string containing classes names for new element.
    * @param {string} attrList - string containing attributes names for new element.
    */
-  private createElement (elName: string, classList?: string, attrList?: object): HTMLElement {
-    const el: HTMLElement = document.createElement(elName);
-
-    if (classList) {
-      el.classList.add(classList);
-    }
-
-    for (const attrName in attrList) {
-      if (attrList.hasOwnProperty(attrName)) {
-        el[attrName] = attrList[attrName];
-      }
-    }
-    return el;
-  }
+  // private createElement (elName: string, classList?: string, attrList?: object): HTMLElement {
+  //   const el: HTMLElement = document.createElement(elName);
+  //
+  //   if (classList) {
+  //     el.classList.add(classList);
+  //   }
+  //
+  //   for (const attrName in attrList) {
+  //     if (attrList.hasOwnProperty(attrName)) {
+  //       el[attrName] = attrList[attrName];
+  //     }
+  //   }
+  //   return el;
+  // }
 }
