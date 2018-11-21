@@ -33,6 +33,18 @@ new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', 
 ```
 ### Advanced settings
 
+Module uses userId property to identify user - by default userId is random number, but it can be specified through setUserId method
+
+| name  | type  | description    |
+|-------|------ |----------------|
+|userId |number |user identifier |
+
+**example*
+
+```
+  Reactions.setUserId(1);
+```
+
 By default module takes page URL as module identifier, but it also can be specified manually by passing id to reactions constructor
 
 use it for:
@@ -46,9 +58,9 @@ new Reactions({parent: '', title: '', reactions: [], id: ''});
 
 where
 
-| name | type            | description     |
-|------|-----------------|-----------------|
-|id    |string or number |module identifier|
+| name | type            | description      |
+|------|-----------------|------------------|
+|id    |string or number |module identifier |
 
 
 
