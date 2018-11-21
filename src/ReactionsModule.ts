@@ -72,8 +72,9 @@ export default class Reactions {
    * @param {string} choice - true-set vote , false-remove vote..
    */
   private saveValue (key: string | number, choice: boolean): void {
+    const type = choice ? 'vote' : 'unvote';
     const message = {
-      'choice': choice,
+      'type': type,
       'reaction': String(key),
       'moduleId': this.id,
       'userId': Reactions.userId
@@ -121,6 +122,7 @@ export default class Reactions {
   public constructor (data: ReactionsConfig) {
     /** Connect with server */
     Reactions.socket.send({
+      'type' : 'new module',
       'moduleId': this.id,
       'userId': Reactions.userId
     });
