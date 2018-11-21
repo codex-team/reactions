@@ -54,6 +54,7 @@ describe('Reactions module', () => {
         reactions: ['👍', '👎', '🤙'],
         id: 'Test id'
       };
+
       const wrongReactions = function () { new Reactions(wrongData); };
 
       expect(wrongReactions).to.throw(Error, 'Parent element is not found');

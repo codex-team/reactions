@@ -8,7 +8,8 @@
     "build:watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "lint": "tslint ./src/**/*.ts --fix",
-    "test": "nyc mocha --require ts-node/register ./tests/*.test.ts"
+    "test": "nyc check-coverage --lines 100 --per-file mocha --require ts-node/register ./tests/*.test.ts",
+    "precommit": "yarn lint && yarn test"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "css-loader": "^1.0.1",
     "event-emitter-es6": "^1.1.5",
     "express": "^4.16.4",
+    "husky": "^1.1.4",
     "jsdom": "^13.0.0",
     "md5": "^2.2.1",
     "mocha": "^5.2.0",

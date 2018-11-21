@@ -151,7 +151,7 @@ export default class Reactions {
     const storageKey: string = 'reactionIndex' + i;
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
-    let votes: number = <number> Reactions.loadValue(storageKey);
+    let votes: number = Reactions.loadValue(storageKey) as number;
 
     if (!votes) {
       votes = 0;
@@ -198,7 +198,7 @@ export default class Reactions {
    */
   public unvote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = <number> Reactions.loadValue(storageKey) - 1;
+    const votes: number = Reactions.loadValue(storageKey) as number - 1;
 
     this.reactions[index].emoji.classList.remove(Reactions.CSS.picked);
     Reactions.saveValue(storageKey, votes);
@@ -212,7 +212,7 @@ export default class Reactions {
    */
   public vote (index: number): void {
     const storageKey: string = 'reactionIndex' + index;
-    const votes: number = <number> Reactions.loadValue(storageKey) + 1;
+    const votes: number = Reactions.loadValue(storageKey) as number + 1;
 
     this.reactions[index].emoji.classList.add(Reactions.CSS.picked);
     Reactions.saveValue(storageKey, votes);

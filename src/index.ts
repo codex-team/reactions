@@ -1,3 +1,3 @@
 import './index.css';
-import Reactions from './ReactionsModule.ts';
+import Reactions from './ReactionsModule';
 export default Reactions;
