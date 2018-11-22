@@ -91,6 +91,11 @@ export default class Reactions {
   }
 
   /**
+   * Array of number of reactions votes
+   */
+  public lastReactionsVotes: number[];
+
+  /**
    * Number of picked element
    */
   private picked: number = undefined;
@@ -128,13 +133,12 @@ export default class Reactions {
     });
 
     /** Get picked reaction */
-    Reactions.socket.socket.on('new message',(msg: any) => {
-      if (msg.id === this.id) {
-        switch (msg.type) {
-          case 'update':
-            this.update(msg);
-            break;
-        }
+    Reactions.socket.socket.on('new message',(msg: any): void => {
+      if (msg.id === this.id) return;
+      switch (msg.type) {
+        case 'update':
+          this.update(msg);
+          break;
       }
     });
 
@@ -163,8 +167,11 @@ export default class Reactions {
 
   private update (msg: any) {
     this.picked = msg.votedReactionId;
+    this.lastReactionsVotes = msg.reactions;
+
     this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
     this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
+
     msg.reactions.forEach((value, index) =>
       this.reactions[index].counter.textContent = value);
   }
