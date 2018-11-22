@@ -1,6 +1,6 @@
-import * as io from 'socket.io-client'
-const EventEmitter = require('event-emitter-es6')
-import Reaction from './../reaction/index.ts'
+import * as io from 'socket.io-client';
+const EventEmitter = require('event-emitter-es6');
+import Reaction from './../reaction/index';
 
 /** Instrument to create socket connection */
 export default class Socket extends EventEmitter {
@@ -11,7 +11,7 @@ export default class Socket extends EventEmitter {
    * @type {SocketIOClient.Socket}
    * @private
    */
-  private socket: SocketIOClient.Socket
+  private socket: SocketIOClient.Socket;
 
   /**
    * Creates an instance of Socket
@@ -21,10 +21,10 @@ export default class Socket extends EventEmitter {
    */
   constructor (url: string) {
 
-    super()
-    this.socket = io(url)
+    super();
+    this.socket = io(url);
 
-    this.socket.on('message', (msg: Reaction[]) => this.message(msg))
+    this.socket.on('message', (msg: Reaction[]) => this.message(msg));
 
   }
 
@@ -35,7 +35,7 @@ export default class Socket extends EventEmitter {
    * @param {number} index - index of the reaction
    */
   send (index: number): void {
-    this.socket.send(index)
+    this.socket.send(index);
   }
 
   /**
@@ -46,7 +46,7 @@ export default class Socket extends EventEmitter {
    * @private
    */
   private message (reactions: Reaction[]) {
-    this.emit('message', reactions)
+    this.emit('message', reactions);
   }
 
 }
