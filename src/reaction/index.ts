@@ -7,7 +7,7 @@ export default class Reaction {
    * @type {number}
    * @private
    */
-  private _rate: number
+  private _rate: number;
 
   /**
    * True if user've already answered to this poll
@@ -15,7 +15,7 @@ export default class Reaction {
    * @type {boolean}
    * @private
    */
-  private _voted: boolean
+  private _voted: boolean;
 
   /**
    * Creates an instance of Reaction
@@ -25,8 +25,8 @@ export default class Reaction {
    * @param {boolean} voted - reaction of the user
    */
   constructor (rate: number, voted: boolean) {
-    this._rate = rate
-    this._voted = voted
+    this._rate = rate;
+    this._voted = voted;
   }
 
   /**
@@ -35,7 +35,7 @@ export default class Reaction {
    * @return {number} - the value of the counter
    */
   public get rate (): number {
-    return this._rate
+    return this._rate;
   }
 
   /**
@@ -44,7 +44,7 @@ export default class Reaction {
    * @return {boolean} - the vote of the user
    */
   public get voted (): boolean {
-    return this._voted
+    return this._voted;
   }
 
   /**
@@ -54,7 +54,7 @@ export default class Reaction {
    * @return {string} - string representation
    */
   public toString (): string {
-    return '[object Reaction]'
+    return '[object Reaction]';
   }
 
 }

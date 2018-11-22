@@ -1,5 +1,14 @@
-import Identifier from './identifier.ts';
 import Socket from './socket/index.ts';
+import Identifier from './identifier';
+import DOM from './utils/dom';
+
+/**
+ * Type of style holder
+ */
+interface Styles {
+  [key: string]: string;
+}
+
 /**
  * Type of input data
  */
@@ -15,13 +24,6 @@ interface ReactionsConfig {
 
   /** Id for module */
   id?: string | number;
-}
-
-/**
- * Type of style holder
- */
-interface Styles {
-  [key: string]: string;
 }
 
 /**
@@ -142,10 +144,10 @@ export default class Reactions {
       }
     });
 
-    this.wrap = this.createElement('div', Reactions.CSS.wrapper);
+    this.wrap = DOM.make('div', Reactions.CSS.wrapper);
     const parent: HTMLElement = document.querySelector(data.parent);
 
-    const pollTitle: HTMLElement = this.createElement('span', Reactions.CSS.title, { textContent: data.title });
+    const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
 
     this.wrap.append(pollTitle);
 
@@ -183,14 +185,14 @@ export default class Reactions {
    * @returns {object} containing pair of emoji element and it's counter
    */
   public addReaction (item: any, i: number): { counter: HTMLElement; emoji: HTMLElement } {
-    const reactionContainer: HTMLElement = this.createElement('div', Reactions.CSS.reactionContainer);
-    const emoji: HTMLElement = this.createElement('div', Reactions.CSS.emoji, {
+    const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
+    const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
       textContent: item
     });
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
 
-    const counter: HTMLElement = this.createElement('span', Reactions.CSS.votes);
+    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: votes });
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
@@ -253,22 +255,4 @@ export default class Reactions {
    * @param {array|string} classList - string containing classes names for new element.
    * @param {string} attrList - string containing attributes names for new element.
    */
-  private createElement (elName: string, classList?: string[] | string, attrList?: object): HTMLElement {
-    const el: HTMLElement = document.createElement(elName);
-
-    if (classList) {
-      if (Array.isArray(classList)) {
-        el.classList.add(...classList);
-      } else {
-        el.classList.add(classList);
-      }
-    }
-
-    for (const attrName in attrList) {
-      if (attrList.hasOwnProperty(attrName)) {
-        el[attrName] = attrList[attrName];
-      }
-    }
-    return el;
-  }
 }
