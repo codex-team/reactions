@@ -128,10 +128,14 @@ describe('Reactions module', () => {
       assert.isNotOk(votesList[0].classList.contains(Reactions.CSS.votesPicked));
     });
 
-    it('should save picked reaction in localStorage', () => {
+    it('should correct save picked reaction in localStorage', () => {
       testReactions.reactionClicked(testIndex);
 
-      assert.equal(+localStorage.getItem(`pickedOn${String(testReactions.id)}`),testReactions);
+      assert.equal(parseInt(localStorage.getItem(`pickedOn${String(testReactions.id)}`),10),testIndex);
+
+      testReactions.reactionClicked(testIndex);
+
+      assert.isNaN(parseInt(localStorage.getItem(`pickedOn${String(testReactions.id)}`),10));
     });
   });
 });
