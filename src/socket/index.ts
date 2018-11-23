@@ -11,7 +11,7 @@ export default class Socket extends EventEmitter {
    * @type {SocketIOClient.Socket}
    * @private
    */
-  public socket: SocketIOClient.Socket
+  public socket: SocketIOClient.Socket;
 
   /**
    * Creates an instance of Socket
