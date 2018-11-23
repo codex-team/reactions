@@ -1,4 +1,4 @@
-import Socket from './socket/index.ts';
+import Socket from './socket/index';
 import Identifier from './identifier';
 import DOM from './utils/dom';
 
@@ -7,6 +7,17 @@ import DOM from './utils/dom';
  */
 interface Styles {
   [key: string]: string;
+}
+
+/**
+ * Type of update options
+ */
+interface UpdateOptions {
+  /** Number of picked reaction */
+  votedReactionId: number;
+
+  /** Values of votes */
+  reactions?: number[];
 }
 
 /**
@@ -100,7 +111,16 @@ export default class Reactions {
   /**
    * Number of picked element
    */
-  private picked: number = undefined;
+  private _picked: number = undefined;
+
+  private get picked () {
+    return this._picked;
+  }
+
+  private set picked (value: number) {
+    localStorage.setItem(`pickedOn${String(this.id)}`, String(value));
+    this._picked = value;
+  }
 
   /**
    * Array of counters elements
@@ -134,16 +154,6 @@ export default class Reactions {
       'userId': Reactions.userId
     });
 
-    /** Get picked reaction */
-    Reactions.socket.socket.on('new message',(msg: any): void => {
-      if (msg.id === this.id) return;
-      switch (msg.type) {
-        case 'update':
-          this.update(msg);
-          break;
-      }
-    });
-
     this.wrap = DOM.make('div', Reactions.CSS.wrapper);
     const parent: HTMLElement = document.querySelector(data.parent);
 
@@ -156,7 +166,20 @@ export default class Reactions {
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i));
     });
+    this.update({
+      votedReactionId: isNaN(parseFloat(localStorage.getItem(`pickedOn${String(this.id)}`))) ?
+    undefined : parseFloat(localStorage.getItem(`pickedOn${String(this.id)}`))
+    });
 
+    /** Get picked reaction */
+    Reactions.socket.socket.on('new message',(msg: any): void => {
+      if (msg.id === this.id) return;
+      switch (msg.type) {
+        case 'update':
+          this.update(msg);
+          break;
+      }
+    });
     if (parent) {
       parent.append(this.wrap);
     } else {
@@ -167,15 +190,29 @@ export default class Reactions {
     localStorage.setItem('reactionsUserId', String(Reactions.userId));
   }
 
-  private update (msg: any) {
+  /**
+   * Set seleced reaction and votes
+   * @param {object} msg - contain options
+   * @param {number} msg.votedReactionId - number of picked reaction
+   * @param {number[]} msg.reactions - values of votes
+   */
+  private update (msg: UpdateOptions) {
+    if (this.picked !== undefined) {
+      this.reactions[this.picked].emoji.classList.remove(Reactions.CSS.picked);
+      this.reactions[this.picked].counter.classList.remove(Reactions.CSS.votesPicked);
+    }
+
     this.picked = msg.votedReactionId;
     this.lastReactionsVotes = msg.reactions;
 
-    this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
-    this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
-
-    msg.reactions.forEach((value, index) =>
-      this.reactions[index].counter.textContent = value);
+    if (this.picked !== undefined) {
+      this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
+      this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
+    }
+    if (msg.reactions !== undefined) {
+      msg.reactions.forEach((value, index) =>
+        this.reactions[index].counter.textContent = String(value));
+    }
   }
 
   /**
@@ -192,7 +229,7 @@ export default class Reactions {
 
     emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
 
-    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: votes });
+    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
@@ -209,6 +246,7 @@ export default class Reactions {
     /** If there is no previously picked reaction */
     if (this.picked === undefined) {
       this.vote(index);
+      this.update({ votedReactionId: index });
       return;
     }
     /** If clicked reaction and previosly picked reaction are not the same */
@@ -216,43 +254,34 @@ export default class Reactions {
       this.vote(index);
       this.unvote(this.picked);
 
+      this.update({ votedReactionId: index });
       return;
     }
 
     /* If clicked reaction and previosly picked reaction are the same*/
     this.saveValue(index, false);
     this.unvote(index);
+    this.update({ votedReactionId: undefined });
   }
 
   /**
-   * Decrease counter and remove highlight
+   * Decrease counter
    * @param {string} index - index of unvoted reaction.
    */
   public unvote (index: number): void {
     const votes: number = +this.reactions[index].counter.textContent - 1;
 
-    this.reactions[index].emoji.classList.remove(Reactions.CSS.picked);
-    this.reactions[index].counter.classList.remove(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
 
   /**
-   * Increase counter and highlight emoji
+   * Increase counter
    * @param {string} index - index of voted reaction.
    */
   public vote (index: number): void {
     const votes: number = +this.reactions[index].counter.textContent + 1;
 
-    this.reactions[index].emoji.classList.add(Reactions.CSS.picked);
     this.saveValue(index, true);
-    this.reactions[index].counter.classList.add(Reactions.CSS.votesPicked);
     this.reactions[index].counter.textContent = String(votes);
   }
-
-  /**
-   * Making creation of dom elements easier
-   * @param {string} elName - string containing tagName.
-   * @param {array|string} classList - string containing classes names for new element.
-   * @param {string} attrList - string containing attributes names for new element.
-   */
 }

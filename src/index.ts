@@ -1,3 +1,3 @@
-import './styles/index.css';
+import './styles/index';
 import Reactions from './ReactionsModule';
 export default Reactions;

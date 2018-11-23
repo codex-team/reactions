@@ -31,5 +31,8 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+    resolve: {
+        extensions: ['.ts','.css','.js']
+    }
 };
