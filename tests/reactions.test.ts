@@ -127,5 +127,11 @@ describe('Reactions module', () => {
       assert.isNotOk(emojiList[0].classList.contains(Reactions.CSS.picked));
       assert.isNotOk(votesList[0].classList.contains(Reactions.CSS.votesPicked));
     });
+
+    it('should save picked reaction in localStorage', () => {
+      testReactions.reactionClicked(testIndex);
+
+      assert.equal(+localStorage.getItem(`pickedOn${String(testReactions.id)}`),testReactions);
+    });
   });
 });

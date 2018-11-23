@@ -17,7 +17,7 @@ interface UpdateOptions {
   votedReactionId: number;
 
   /** Values of votes */
-  reactions?: number[];
+  reactions?: {[key: string]: number};
 }
 
 /**
@@ -106,12 +106,12 @@ export default class Reactions {
   /**
    * Array of number of reactions votes
    */
-  public lastReactionsVotes: number[];
+  public lastReactionsVotes: {[key: string]: number};
 
   /**
    * Number of picked element
    */
-  private _picked: number = undefined;
+  private _picked: number;
 
   private get picked () {
     return this._picked;
@@ -135,7 +135,7 @@ export default class Reactions {
   /**
    * Module identifier
    */
-  private id: Identifier;
+  public id: Identifier;
 
   /**
    * Create a reactions module.
@@ -166,14 +166,19 @@ export default class Reactions {
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i));
     });
+
+    let lsPicked: number = parseInt(localStorage.getItem(`pickedOn${String(this.id)}`),10);
+    let votedReactionId: number = isNaN(lsPicked) ? undefined : lsPicked;
     this.update({
-      votedReactionId: isNaN(parseFloat(localStorage.getItem(`pickedOn${String(this.id)}`))) ?
-    undefined : parseFloat(localStorage.getItem(`pickedOn${String(this.id)}`))
+      votedReactionId: votedReactionId
     });
 
     /** Get picked reaction */
-    Reactions.socket.socket.on('new message',(msg: any): void => {
-      if (msg.id === this.id) return;
+    Reactions.socket.socket.on('new message', (msg: any): void => {
+      if (msg.id === this.id) {
+        return;
+      }
+
       switch (msg.type) {
         case 'update':
           this.update(msg);
@@ -209,9 +214,14 @@ export default class Reactions {
       this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
       this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
     }
+
     if (msg.reactions !== undefined) {
-      msg.reactions.forEach((value, index) =>
-        this.reactions[index].counter.textContent = String(value));
+      this.reactions.forEach((reaction) => {
+        let value = msg.reactions[reaction.emoji.textContent];
+        if (value !== undefined) {
+          reaction.counter.textContent = String(value);
+        }
+      });
     }
   }
 
