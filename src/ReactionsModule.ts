@@ -1,6 +1,8 @@
 import Socket from './socket/index';
 import Identifier from './identifier';
 import DOM from './utils/dom';
+import Common from './utils/common';
+import Storage from './utils/storage';
 
 /**
  * Type of style holder
@@ -45,17 +47,12 @@ export default class Reactions {
   /**
    *  User id for save user reaction
    */
-  public static userId: number | string = localStorage.getItem('reactionsUserId') || Reactions.getRandomValue();
-
-  /**
-   * URl of server
-   */
-  public static serverURL: string = 'localhost:3000';
+  public static userId: number | string = Storage.getItem('reactionsUserId') || Common.getRandomValue();
 
   /**
    * Class for connection
    */
-  private static socket: Socket = new Socket(Reactions.serverURL);
+  private static socket: Socket = new Socket(process.env.serverURL);
 
   /**
    * Returns style name
@@ -73,15 +70,8 @@ export default class Reactions {
   }
 
   /**
-   * Return random number
-   */
-  private static getRandomValue (): number {
-    return window.crypto.getRandomValues(new Uint32Array(1))[0];
-  }
-
-  /**
-   * Set new value of counter stored in localStorage
-   * @param {string} key - field name in localStorage.
+   * Set new value of counter stored
+   * @param {string} key - field name.
    * @param {string} choice - true-set vote , false-remove vote..
    */
   private saveValue (key: string | number, choice: boolean): void {
@@ -118,7 +108,7 @@ export default class Reactions {
   }
 
   private set picked (value: number) {
-    localStorage.setItem(`pickedOn${String(this.id)}`, String(value));
+    Storage.setItem(`User${Reactions.userId}PickedOn${String(this.id)}`, value);
     this._picked = value;
   }
 
@@ -167,10 +157,8 @@ export default class Reactions {
       this.reactions.push(this.addReaction(item, i));
     });
 
-    let lsPicked: number = parseInt(localStorage.getItem(`pickedOn${String(this.id)}`),10);
-    let votedReactionId: number = isNaN(lsPicked) ? undefined : lsPicked;
     this.update({
-      votedReactionId: votedReactionId
+      votedReactionId: Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`)
     });
 
     /** Get picked reaction */
@@ -192,7 +180,7 @@ export default class Reactions {
     }
 
     /** Set user id on close page */
-    localStorage.setItem('reactionsUserId', String(Reactions.userId));
+    Storage.setItem('reactionsUserId', Reactions.userId);
   }
 
   /**
