@@ -1,10 +1,10 @@
-import { describe, it, before, after } from 'mocha';
+import { describe, it, before } from 'mocha';
 import { assert } from 'chai';
 import { LocalStorageMock } from './mock';
 
 describe('Storage', () => {
   let Storage;
-  (<any> global).localStorage = new LocalStorageMock();
+  (global as any).localStorage = new LocalStorageMock();
 
   before(() => {
     Storage = require('../src/utils/storage').default;
