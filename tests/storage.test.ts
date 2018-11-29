@@ -1,6 +1,7 @@
 import { describe, it, before, after } from 'mocha';
 import { assert } from 'chai';
 import { LocalStorageMock } from './mock';
+
 describe('Storage', () => {
   let Storage;
   (<any> global).localStorage = new LocalStorageMock();
