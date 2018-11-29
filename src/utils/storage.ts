@@ -16,9 +16,7 @@ export default class Storage {
    * @param {string | number} key - key of storage
    */
   public static getItem (key: string | number): string {
-    let result: string = localStorage.getItem(String(key));
-    if (result === null) { result = undefined; }
-    return result;
+    return localStorage.getItem(String(key)) || undefined;
   }
   /**
    * Set value by key

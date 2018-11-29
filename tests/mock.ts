@@ -2,17 +2,28 @@ import { JSDOM } from 'jsdom';
 import * as wcrypto from '@trust/webcrypto';
 
 // Storage Mock
-function storageMock () {
-  const storage = {};
+class LocalStorageMock {
+  private store: object;
 
-  return {
-    setItem: (key, value) => {
-      storage[key] = value || '';
-    },
-    getItem: (key) => {
-      return key in storage ? storage[key] : null;
-    }
-  };
+  constructor () {
+    this.store = {};
+  }
+
+  clear () {
+    this.store = {};
+  }
+
+  getItem (key) {
+    return this.store[key] || null;
+  }
+
+  setItem (key, value) {
+    this.store[key] = value.toString();
+  }
+
+  removeItem (key) {
+    delete this.store[key];
+  }
 }
 
 function domMock () {
@@ -46,4 +57,4 @@ function deleteMock () {
   delete global.crypto;
 }
 
-export { storageMock, domMock, deleteMock };
+export { LocalStorageMock, domMock, deleteMock };

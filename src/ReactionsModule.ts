@@ -203,14 +203,15 @@ export default class Reactions {
       this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
     }
 
-    if (msg.reactions !== undefined) {
-      this.reactions.forEach((reaction) => {
-        let value = msg.reactions[reaction.emoji.textContent];
-        if (value !== undefined) {
-          reaction.counter.textContent = String(value);
-        }
-      });
+    if (msg.reactions === undefined) {
+      return;
     }
+    this.reactions.forEach((reaction) => {
+      let value = msg.reactions[reaction.emoji.textContent];
+      if (value !== undefined) {
+        reaction.counter.textContent = String(value);
+      }
+    });
   }
 
   /**

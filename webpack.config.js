@@ -34,7 +34,7 @@ module.exports = {
     ]
   },
     resolve: {
-        extensions: ['.ts','.css','.js']
+        extensions: ['.ts', '.css', '.js']
     },
     plugins: [
         new Dotenv()
