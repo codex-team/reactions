@@ -77,12 +77,13 @@ export default class Reactions {
   private saveValue (key: string | number, choice: boolean): void {
     const type = choice ? 'vote' : 'unvote';
     let counters = [];
+    console.log(choice);
     for (const i in this.reactions) {
-      counters[i] = +this.reactions[key].counter.textContent;
+      counters[i] = +this.reactions[i].counter.textContent;
     }
     const message = {
       'type': type,
-      'reaction': String(key),
+      'votedReactionId': String(key),
       'reactions': counters,
       'moduleId': this.id,
       'userId': Reactions.userId
@@ -162,21 +163,21 @@ export default class Reactions {
       this.reactions.push(this.addReaction(item, i));
     });
 
-    this.update({
-      votedReactionId: Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`)
-    });
-
+    if(Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`)) {
+      this.update({
+        votedReactionId: Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`),
+        userId: Reactions.userId
+      });
+    }
     /** Get picked reaction */
     Reactions.socket.socket.on('update', (msg: any): void => {
       if (msg.moduleId === this.id) {
         return;
       }
 
-      switch (msg.type) {
-        case 'vote' || 'unvote':
+      if (msg.type == 'vote' || msg.type == 'unvote') {
           console.log('socket received', msg);
           this.update(msg);
-          break;
       }
     });
 
@@ -196,30 +197,52 @@ export default class Reactions {
    * @param {number} msg.votedReactionId - number of picked reaction
    * @param {number[]} msg.reactions - values of votes
    */
-  private update (msg: UpdateOptions) {
-    if (this.picked !== undefined) {
+  private update (msg) {
+    console.log(msg);
+    if (Reactions.userId == msg.userId) {
+      // this.lastReactionsVotes = msg.reactions;
+
+      /** If there is no previously picked reaction */
+      if (this.picked === undefined) {
+        this.picked = +msg.votedReactionId;
+
+        this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
+        this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
+
+        this.vote(+msg.votedReactionId);
+
+        return;
+      }
+      /** If clicked reaction and previously picked reaction are not the same */
+      if (this.picked !== msg.votedReactionId) {
+        this.reactions[this.picked].emoji.classList.remove(Reactions.CSS.picked);
+        this.reactions[this.picked].counter.classList.remove(Reactions.CSS.votesPicked);
+
+        this.unvote(this.picked);
+        this.picked = +msg.votedReactionId;
+
+        this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
+        this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
+
+        this.vote(+msg.votedReactionId);
+        return;
+      }
+
+      /* If clicked reaction and previously picked reaction are the same*/
+      console.log('If clicked reaction and previously picked reaction are the same');
       this.reactions[this.picked].emoji.classList.remove(Reactions.CSS.picked);
       this.reactions[this.picked].counter.classList.remove(Reactions.CSS.votesPicked);
+      this.unvote(+msg.votedReactionId);
+
+      this.picked = undefined;
+    } else {
+      this.reactions.forEach((reaction, i) => {
+        let value = +msg.reactions[i];
+        if (value !== undefined) {
+          reaction.counter.textContent = String(value);
+        }
+      });
     }
-
-    this.picked = msg.votedReactionId;
-    this.lastReactionsVotes = msg.reactions;
-
-    if (this.picked !== undefined) {
-      this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
-      this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
-    }
-
-    if (msg.reactions === undefined) {
-      return;
-    }
-
-    this.reactions.forEach((reaction, i) => {
-      let value = msg.reactions[i];
-      if (value !== undefined) {
-        reaction.counter.textContent = String(value);
-      }
-    });
   }
 
   /**
@@ -250,25 +273,11 @@ export default class Reactions {
    * @param {string} index - index of reaction clicked by user.
    */
   public reactionClicked (index: number): void {
-    /** If there is no previously picked reaction */
-    if (this.picked === undefined) {
-      this.vote(index);
-      this.update({ votedReactionId: index });
-      return;
-    }
-    /** If clicked reaction and previously picked reaction are not the same */
-    if (this.picked !== index) {
-      this.vote(index);
-      this.unvote(this.picked);
-
-      this.update({ votedReactionId: index });
-      return;
-    }
-
-    /* If clicked reaction and previously picked reaction are the same*/
-    this.saveValue(index, false);
-    this.unvote(index);
-    this.update({ votedReactionId: undefined });
+    console.log(index);
+    const lastPicked = this.picked;
+    this.update({userId: Reactions.userId, votedReactionId: index});
+    console.log('lastPicked', lastPicked, 'this.picked', this.picked);
+    this.saveValue(index, lastPicked == index || lastPicked == undefined);
   }
 
   /**
@@ -288,7 +297,6 @@ export default class Reactions {
   public vote (index: number): void {
     const votes: number = +this.reactions[index].counter.textContent + 1;
 
-    this.saveValue(index, true);
     this.reactions[index].counter.textContent = String(votes);
   }
 }
