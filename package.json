@@ -8,7 +8,7 @@
     "build:watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "lint": "tslint ./src/**/*.ts --fix",
-    "test": "nyc check-coverage --lines 100 --per-file mocha --require ts-node/register ./tests/*.test.ts",
+    "test": "nyc report check-coverage --lines 100 --per-file mocha --require ts-node/register ./tests/*.test.ts",
     "precommit": "yarn lint && yarn test"
   },
   "repository": {
