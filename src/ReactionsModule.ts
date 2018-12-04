@@ -52,7 +52,7 @@ export default class Reactions {
   /**
    * Class for connection
    */
-  private static socket: Socket = new Socket(process.env.serverURL);
+  private static socket: Socket = new Socket('localhost:3000');
 
   /**
    * Returns style name
@@ -76,9 +76,14 @@ export default class Reactions {
    */
   private saveValue (key: string | number, choice: boolean): void {
     const type = choice ? 'vote' : 'unvote';
+    let counters = [];
+    for (const i in this.reactions) {
+      counters[i] = +this.reactions[key].counter.textContent;
+    }
     const message = {
       'type': type,
       'reaction': String(key),
+      'reactions': counters,
       'moduleId': this.id,
       'userId': Reactions.userId
     };
@@ -137,6 +142,8 @@ export default class Reactions {
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
+    this.id = new Identifier(data.id);
+
     /** Connect with server */
     Reactions.socket.send({
       'type' : 'initialization',
@@ -151,8 +158,6 @@ export default class Reactions {
 
     this.wrap.append(pollTitle);
 
-    this.id = new Identifier(data.id);
-
     data.reactions.forEach((item: string, i: number) => {
       this.reactions.push(this.addReaction(item, i));
     });
@@ -162,17 +167,19 @@ export default class Reactions {
     });
 
     /** Get picked reaction */
-    Reactions.socket.socket.on('new message', (msg: any): void => {
-      if (msg.id === this.id) {
+    Reactions.socket.socket.on('update', (msg: any): void => {
+      if (msg.moduleId === this.id) {
         return;
       }
 
       switch (msg.type) {
-        case 'update':
+        case 'vote' || 'unvote':
+          console.log('socket received', msg);
           this.update(msg);
           break;
       }
     });
+
     if (parent) {
       parent.append(this.wrap);
     } else {
@@ -206,8 +213,9 @@ export default class Reactions {
     if (msg.reactions === undefined) {
       return;
     }
-    this.reactions.forEach((reaction) => {
-      let value = msg.reactions[reaction.emoji.textContent];
+
+    this.reactions.forEach((reaction, i) => {
+      let value = msg.reactions[i];
       if (value !== undefined) {
         reaction.counter.textContent = String(value);
       }
@@ -248,7 +256,7 @@ export default class Reactions {
       this.update({ votedReactionId: index });
       return;
     }
-    /** If clicked reaction and previosly picked reaction are not the same */
+    /** If clicked reaction and previously picked reaction are not the same */
     if (this.picked !== index) {
       this.vote(index);
       this.unvote(this.picked);
@@ -257,7 +265,7 @@ export default class Reactions {
       return;
     }
 
-    /* If clicked reaction and previosly picked reaction are the same*/
+    /* If clicked reaction and previously picked reaction are the same*/
     this.saveValue(index, false);
     this.unvote(index);
     this.update({ votedReactionId: undefined });
