@@ -52,7 +52,7 @@ export default class Reactions {
   /**
    * Class for connection
    */
-    private static socket: Socket = new Socket(process.env.serverURL);
+  private static socket: Socket = new Socket(process.env.serverURL);
 
   /**
    * Returns style name
@@ -187,9 +187,8 @@ export default class Reactions {
    * @param {string} index - index of reaction clicked by user.
    */
   public reactionClicked (index: number): void {
-    const lastPicked = this.picked;
     this.update({ userId: Reactions.userId, votedReactionId: index });
-    this.saveValue(index, lastPicked === index || lastPicked === undefined);
+    this.saveValue(index, this.picked !== undefined);
   }
 
   /**
