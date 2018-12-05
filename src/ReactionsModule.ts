@@ -95,7 +95,7 @@ export default class Reactions {
   /**
    * Array of counters elements
    */
-  private reactions/*: Array<{ counter: HTMLElement; emoji: HTMLElement }>*/ = {};
+  private reactions /*: Array<{ counter: HTMLElement; emoji: HTMLElement }>*/ = {};
 
   /**
    * Elements holder
@@ -188,14 +188,6 @@ export default class Reactions {
    */
   public reactionClicked (code: number): void {
     this.update({ userId: Reactions.userId, votedReactionId: code });
-
-    let counter = 0;
-
-    for (const i in this.reactions) {
-      counter++;
-    }
-
-    console.log('reactions:', this.reactions, 'length:', counter);
 
     this.saveValue(code, this.picked !== undefined);
   }
