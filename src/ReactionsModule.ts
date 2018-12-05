@@ -52,7 +52,7 @@ export default class Reactions {
   /**
    * Class for connection
    */
-  private static socket: Socket = new Socket('localhost:3000');
+    private static socket: Socket = new Socket(process.env.serverURL);
 
   /**
    * Returns style name
