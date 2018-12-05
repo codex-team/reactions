@@ -70,27 +70,6 @@ export default class Reactions {
   }
 
   /**
-   * Set new value of counter stored
-   * @param {string} key - field name.
-   * @param {string} choice - true-set vote , false-remove vote..
-   */
-  private saveValue (key: string | number, choice: boolean): void {
-    const type = choice ? 'vote' : 'unvote';
-    let counters = [];
-    for (const i in this.reactions) {
-      counters[i] = +this.reactions[i].counter.textContent;
-    }
-    const message = {
-      'type': type,
-      'votedReactionId': String(key),
-      'reactions': counters,
-      'moduleId': this.id,
-      'userId': Reactions.userId
-    };
-    Reactions.socket.send(message);
-  }
-
-  /**
    * Set userId
    * @param {number} userId
    */
@@ -104,18 +83,14 @@ export default class Reactions {
   public lastReactionsVotes: {[key: string]: number};
 
   /**
+   * Module identifier
+   */
+  public id: Identifier;
+
+  /**
    * Number of picked element
    */
   private _picked: number;
-
-  private get picked () {
-    return this._picked;
-  }
-
-  private set picked (value: number) {
-    Storage.setItem(`User${Reactions.userId}PickedOn${String(this.id)}`, value);
-    this._picked = value;
-  }
 
   /**
    * Array of counters elements
@@ -126,11 +101,6 @@ export default class Reactions {
    * Elements holder
    */
   private wrap: HTMLElement;
-
-  /**
-   * Module identifier
-   */
-  public id: Identifier;
 
   /**
    * Create a reactions module.
@@ -190,7 +160,81 @@ export default class Reactions {
   }
 
   /**
-   * Set seleced reaction and votes
+   * Create and insert reactions button
+   * @param {string} item - emoji from data.reactions array.
+   * @param {string} i - array counter.
+   * @returns {object} containing pair of emoji element and it's counter
+   */
+  public addReaction (item: any, i: number): { counter: HTMLElement; emoji: HTMLElement } {
+    const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
+    const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
+      textContent: item
+    });
+
+    emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
+
+    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
+
+    reactionContainer.append(emoji);
+    reactionContainer.append(counter);
+    this.wrap.append(reactionContainer);
+
+    return { emoji, counter };
+  }
+
+  /**
+   * Processing click on emoji
+   * @param {string} index - index of reaction clicked by user.
+   */
+  public reactionClicked (index: number): void {
+    const lastPicked = this.picked;
+    this.update({ userId: Reactions.userId, votedReactionId: index });
+    this.saveValue(index, lastPicked === index || lastPicked === undefined);
+  }
+
+  /**
+   * Increase counter
+   * @param {string} index - index of voted reaction.
+   */
+  public vote (index: number): void {
+    const votes: number = +this.reactions[index].counter.textContent + 1;
+
+    this.reactions[index].counter.textContent = String(votes);
+  }
+
+  /**
+   * Decrease counter
+   * @param {string} index - index of unvoted reaction.
+   */
+  public unvote (index: number): void {
+    const votes: number = +this.reactions[index].counter.textContent - 1;
+
+    this.reactions[index].counter.textContent = String(votes);
+  }
+
+  /**
+   * Set new value of counter stored
+   * @param {string} key - field name.
+   * @param {string} choice - true-set vote , false-remove vote..
+   */
+  private saveValue (key: string | number, choice: boolean): void {
+    const type = choice ? 'vote' : 'unvote';
+    let counters = [];
+    for (const i in this.reactions) {
+      counters[i] = +this.reactions[i].counter.textContent;
+    }
+    const message = {
+      'type': type,
+      'votedReactionId': String(key),
+      'reactions': counters,
+      'moduleId': this.id,
+      'userId': Reactions.userId
+    };
+    Reactions.socket.send(message);
+  }
+
+  /**
+   * Set selected reaction and votes
    * @param {object} msg - contain options
    * @param {number} msg.votedReactionId - number of picked reaction
    * @param {number[]} msg.reactions - values of votes
@@ -239,56 +283,12 @@ export default class Reactions {
     }
   }
 
-  /**
-   * Create and insert reactions button
-   * @param {string} item - emoji from data.reactions array.
-   * @param {string} i - array counter.
-   * @returns {object} containing pair of emoji element and it's counter
-   */
-  public addReaction (item: any, i: number): { counter: HTMLElement; emoji: HTMLElement } {
-    const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
-    const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
-      textContent: item
-    });
-
-    emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
-
-    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
-
-    reactionContainer.append(emoji);
-    reactionContainer.append(counter);
-    this.wrap.append(reactionContainer);
-
-    return { emoji, counter };
+  private get picked () {
+    return this._picked;
   }
 
-  /**
-   * Processing click on emoji
-   * @param {string} index - index of reaction clicked by user.
-   */
-  public reactionClicked (index: number): void {
-    const lastPicked = this.picked;
-    this.update({ userId: Reactions.userId, votedReactionId: index });
-    this.saveValue(index, lastPicked === index || lastPicked === undefined);
-  }
-
-  /**
-   * Decrease counter
-   * @param {string} index - index of unvoted reaction.
-   */
-  public unvote (index: number): void {
-    const votes: number = +this.reactions[index].counter.textContent - 1;
-
-    this.reactions[index].counter.textContent = String(votes);
-  }
-
-  /**
-   * Increase counter
-   * @param {string} index - index of voted reaction.
-   */
-  public vote (index: number): void {
-    const votes: number = +this.reactions[index].counter.textContent + 1;
-
-    this.reactions[index].counter.textContent = String(votes);
+  private set picked (value: number) {
+    Storage.setItem(`User${Reactions.userId}PickedOn${String(this.id)}`, value);
+    this._picked = value;
   }
 }
