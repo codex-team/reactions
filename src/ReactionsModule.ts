@@ -48,6 +48,30 @@ export default class Reactions {
     };
   }
 
+   /**
+   * Creates modules from user tags and attributes
+   */
+  public static init(): void {
+    const containers: HTMLElement[] = Array.from(document.querySelectorAll('reactions'));
+
+    containers.forEach(item => this.insertModules(item));
+  }
+
+  /**
+   * Inserts modules into page 
+   * @param {HTMLElement} container - users tag to insert module into
+   */
+  private static insertModules(container : HTMLElement): void {
+    const reactions: HTMLElement[] = Array.from(container.querySelectorAll('reaction'));
+    let emojis: string[] = [];
+
+    reactions.forEach(item => emojis.push(item.textContent));
+    container.innerHTML = '';
+    
+    new Reactions({parent: container.localName, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined});
+  }
+
+
   /**
    * Return random number
    */
