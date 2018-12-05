@@ -77,7 +77,6 @@ export default class Reactions {
   private saveValue (key: string | number, choice: boolean): void {
     const type = choice ? 'vote' : 'unvote';
     let counters = [];
-    console.log(choice);
     for (const i in this.reactions) {
       counters[i] = +this.reactions[i].counter.textContent;
     }
@@ -163,7 +162,7 @@ export default class Reactions {
       this.reactions.push(this.addReaction(item, i));
     });
 
-    if(Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`)) {
+    if (Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`)) {
       this.update({
         votedReactionId: Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`),
         userId: Reactions.userId
@@ -175,9 +174,8 @@ export default class Reactions {
         return;
       }
 
-      if (msg.type == 'vote' || msg.type == 'unvote') {
-          console.log('socket received', msg);
-          this.update(msg);
+      if (msg.type === 'vote' || msg.type === 'unvote') {
+        this.update(msg);
       }
     });
 
@@ -198,10 +196,7 @@ export default class Reactions {
    * @param {number[]} msg.reactions - values of votes
    */
   private update (msg) {
-    console.log(msg);
-    if (Reactions.userId == msg.userId) {
-      // this.lastReactionsVotes = msg.reactions;
-
+    if (Reactions.userId === msg.userId) {
       /** If there is no previously picked reaction */
       if (this.picked === undefined) {
         this.picked = +msg.votedReactionId;
@@ -229,7 +224,6 @@ export default class Reactions {
       }
 
       /* If clicked reaction and previously picked reaction are the same*/
-      console.log('If clicked reaction and previously picked reaction are the same');
       this.reactions[this.picked].emoji.classList.remove(Reactions.CSS.picked);
       this.reactions[this.picked].counter.classList.remove(Reactions.CSS.votesPicked);
       this.unvote(+msg.votedReactionId);
@@ -273,11 +267,9 @@ export default class Reactions {
    * @param {string} index - index of reaction clicked by user.
    */
   public reactionClicked (index: number): void {
-    console.log(index);
     const lastPicked = this.picked;
-    this.update({userId: Reactions.userId, votedReactionId: index});
-    console.log('lastPicked', lastPicked, 'this.picked', this.picked);
-    this.saveValue(index, lastPicked == index || lastPicked == undefined);
+    this.update({ userId: Reactions.userId, votedReactionId: index });
+    this.saveValue(index, lastPicked === index || lastPicked === undefined);
   }
 
   /**
