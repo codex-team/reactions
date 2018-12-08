@@ -1,17 +1,21 @@
 import { describe, it, before } from 'mocha';
 import { assert } from 'chai';
-import { LocalStorageMock } from './mock';
+import { LocalStorageMock, domMock } from './mock';
 
 describe('Storage', () => {
   let Storage;
-  (global as any).localStorage = new LocalStorageMock();
+
 
   before(() => {
+    (global as any).localStorage = new LocalStorageMock();
+    // domMock();
     Storage = require('../src/utils/storage').default;
   });
 
   describe('getItem',() => {
-    localStorage.setItem('5','test');
+    before(() => {
+      localStorage.setItem('5','test');
+    });
 
     it('should correctly return value from localStorage', () => {
       assert.equal(Storage.getItem('5'), 'test');
@@ -24,23 +28,30 @@ describe('Storage', () => {
   });
 
   describe('setItem',() => {
-    it('should correctly set value', () => {
+
+    before(() => {
       Storage.setItem(5,3);
+    });
+
+    it('should correctly set value', () => {
       assert.equal(localStorage.getItem('5'), '3');
     });
   });
 
   describe('getInt',() => {
-    localStorage.setItem('test','5');
+
+    before(() => {
+      localStorage.setItem('test0','5');
+      localStorage.setItem('test1','test5');
+    });
 
     it('should correctly return integer from localStorage', () => {
-      assert.equal(Storage.getItem('test'), 5);
+      assert.equal(Storage.getItem('test0'), 5);
     });
 
     it('should return undefined if key or value is wrong', () => {
       assert.equal(Storage.getItem('wrong'), undefined);
-      localStorage.setItem('test','test5');
-      assert.equal(Storage.getInt('test'), undefined);
+      assert.equal(Storage.getInt('test1'), undefined);
     });
   });
 });

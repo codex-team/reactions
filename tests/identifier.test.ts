@@ -51,13 +51,13 @@ describe('Identifier class', () => {
     it('should return string representation of Identifier for JSON serializing', () => {
       const testIdentifier = new Identifier();
 
-      expect(testIdentifier.toJSON()).to.equal('http://test.test/');
+      expect(testIdentifier.toJSON()).to.equal('test.test/');
     });
 
     it('should return string representation of Identifier', () => {
       const testIdentifier = new Identifier();
 
-      expect(testIdentifier.toString()).to.equal('http://test.test/');
+      expect(testIdentifier.toString()).to.equal('test.test/');
     });
   });
 });

@@ -1,6 +1,6 @@
 import { describe, it, before, after } from 'mocha';
 import { expect, assert } from 'chai';
-import { domMock, deleteMock } from './mock';
+import { LocalStorageMock, domMock, deleteMock } from './mock';
 
 describe('Reactions module', () => {
   let Reactions;
@@ -16,6 +16,8 @@ describe('Reactions module', () => {
 
   before(() => {
     domMock();
+
+    (global as any).localStorage = new LocalStorageMock();
 
     Reactions = require('../src/ReactionsModule').default;
 
@@ -131,11 +133,11 @@ describe('Reactions module', () => {
     it('should correct save picked reaction in localStorage', () => {
       testReactions.reactionClicked(testIndex);
 
-      assert.equal(parseInt(localStorage.getItem(`pickedOn${String(testReactions.id)}`),10),testIndex);
+      assert.equal(parseInt(localStorage.getItem(`User${Reactions.userId}PickedOn${String(testReactions.id)}`), 10), testIndex);
 
       testReactions.reactionClicked(testIndex);
 
-      assert.isNaN(parseInt(localStorage.getItem(`pickedOn${String(testReactions.id)}`),10));
+      assert.isNaN(parseInt(localStorage.getItem(`User${Reactions.userId}PickedOn${String(testReactions.id)}`), 10));
     });
   });
 });

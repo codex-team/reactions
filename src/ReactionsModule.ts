@@ -70,22 +70,6 @@ export default class Reactions {
   }
 
   /**
-   * Set new value of counter stored
-   * @param {string} key - field name.
-   * @param {string} choice - true-set vote , false-remove vote..
-   */
-  private saveValue (key: string | number, choice: boolean): void {
-    const type = choice ? 'vote' : 'unvote';
-    const message = {
-      'type': type,
-      'reaction': String(key),
-      'moduleId': this.id,
-      'userId': Reactions.userId
-    };
-    Reactions.socket.send(message);
-  }
-
-  /**
    * Set userId
    * @param {number} userId
    */
@@ -99,33 +83,24 @@ export default class Reactions {
   public lastReactionsVotes: {[key: string]: number};
 
   /**
+   * Module identifier
+   */
+  public id: Identifier;
+
+  /**
    * Number of picked element
    */
   private _picked: number;
 
-  private get picked () {
-    return this._picked;
-  }
-
-  private set picked (value: number) {
-    Storage.setItem(`User${Reactions.userId}PickedOn${String(this.id)}`, value);
-    this._picked = value;
-  }
-
   /**
    * Array of counters elements
    */
-  private reactions: Array<{ counter: HTMLElement; emoji: HTMLElement }> = [];
+  private reactions : {[emodji: string]: {counter: HTMLElement, emoji: HTMLElement; } } = {};
 
   /**
    * Elements holder
    */
   private wrap: HTMLElement;
-
-  /**
-   * Module identifier
-   */
-  public id: Identifier;
 
   /**
    * Create a reactions module.
@@ -137,6 +112,8 @@ export default class Reactions {
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
+    this.id = new Identifier(data.id);
+
     /** Connect with server */
     Reactions.socket.send({
       'type' : 'initialization',
@@ -145,34 +122,35 @@ export default class Reactions {
     });
 
     this.wrap = DOM.make('div', Reactions.CSS.wrapper);
+
     const parent: HTMLElement = document.querySelector(data.parent);
 
     const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
 
     this.wrap.append(pollTitle);
 
-    this.id = new Identifier(data.id);
-
     data.reactions.forEach((item: string, i: number) => {
-      this.reactions.push(this.addReaction(item, i));
+      this.reactions[item.codePointAt(0)] = this.addReaction(item, item.codePointAt(0));
     });
 
-    this.update({
-      votedReactionId: Storage.getInt(`User${Reactions.userId}PickedOn${String(this.id)}`)
-    });
+    if (Storage.getInt(this.getStorageKey(Reactions.userId, this.id))) {
+      this.update({
+        votedReactionId: Storage.getInt(this.getStorageKey(Reactions.userId, this.id)),
+        userId: Reactions.userId
+      });
+    }
 
     /** Get picked reaction */
-    Reactions.socket.socket.on('new message', (msg: any): void => {
-      if (msg.id === this.id) {
+    Reactions.socket.socket.on('update', (msg: any): void => {
+      if (msg.moduleId === this.id) {
         return;
       }
 
-      switch (msg.type) {
-        case 'update':
-          this.update(msg);
-          break;
+      if (msg.type === 'vote' || msg.type === 'unvote') {
+        this.update(msg);
       }
     });
+
     if (parent) {
       parent.append(this.wrap);
     } else {
@@ -184,49 +162,18 @@ export default class Reactions {
   }
 
   /**
-   * Set seleced reaction and votes
-   * @param {object} msg - contain options
-   * @param {number} msg.votedReactionId - number of picked reaction
-   * @param {number[]} msg.reactions - values of votes
-   */
-  private update (msg: UpdateOptions) {
-    if (this.picked !== undefined) {
-      this.reactions[this.picked].emoji.classList.remove(Reactions.CSS.picked);
-      this.reactions[this.picked].counter.classList.remove(Reactions.CSS.votesPicked);
-    }
-
-    this.picked = msg.votedReactionId;
-    this.lastReactionsVotes = msg.reactions;
-
-    if (this.picked !== undefined) {
-      this.reactions[this.picked].emoji.classList.add(Reactions.CSS.picked);
-      this.reactions[this.picked].counter.classList.add(Reactions.CSS.votesPicked);
-    }
-
-    if (msg.reactions === undefined) {
-      return;
-    }
-    this.reactions.forEach((reaction) => {
-      let value = msg.reactions[reaction.emoji.textContent];
-      if (value !== undefined) {
-        reaction.counter.textContent = String(value);
-      }
-    });
-  }
-
-  /**
    * Create and insert reactions button
    * @param {string} item - emoji from data.reactions array.
-   * @param {string} i - array counter.
+   * @param {string} code - code of emoji and reactions object key.
    * @returns {object} containing pair of emoji element and it's counter
    */
-  public addReaction (item: any, i: number): { counter: HTMLElement; emoji: HTMLElement } {
+  public addReaction (item: any, code: number): { counter: HTMLElement; emoji: HTMLElement } {
     const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
     const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
       textContent: item
     });
 
-    emoji.addEventListener('click', (click: Event) => this.reactionClicked(i));
+    emoji.addEventListener('click', (click: Event) => this.reactionClicked(code));
 
     const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
 
@@ -239,48 +186,137 @@ export default class Reactions {
 
   /**
    * Processing click on emoji
-   * @param {string} index - index of reaction clicked by user.
+   * @param {number} code - code of emoji and reactions object key.
    */
-  public reactionClicked (index: number): void {
-    /** If there is no previously picked reaction */
-    if (this.picked === undefined) {
-      this.vote(index);
-      this.update({ votedReactionId: index });
-      return;
-    }
-    /** If clicked reaction and previosly picked reaction are not the same */
-    if (this.picked !== index) {
-      this.vote(index);
-      this.unvote(this.picked);
+  public reactionClicked (code: number): void {
+    this.update({ userId: Reactions.userId, votedReactionId: code });
 
-      this.update({ votedReactionId: index });
-      return;
-    }
-
-    /* If clicked reaction and previosly picked reaction are the same*/
-    this.saveValue(index, false);
-    this.unvote(index);
-    this.update({ votedReactionId: undefined });
-  }
-
-  /**
-   * Decrease counter
-   * @param {string} index - index of unvoted reaction.
-   */
-  public unvote (index: number): void {
-    const votes: number = +this.reactions[index].counter.textContent - 1;
-
-    this.reactions[index].counter.textContent = String(votes);
+    this.saveValue(code, this.picked !== undefined);
   }
 
   /**
    * Increase counter
-   * @param {string} index - index of voted reaction.
+   * @param {string} code - code of voted emoji and reactions object key.
    */
-  public vote (index: number): void {
-    const votes: number = +this.reactions[index].counter.textContent + 1;
+  public vote (code: number): void {
+    const votes: number = +this.reactions[code].counter.textContent + 1;
 
-    this.saveValue(index, true);
-    this.reactions[index].counter.textContent = String(votes);
+    this.reactions[code].counter.textContent = votes.toString();
+  }
+
+  /**
+   * Decrease counter
+   * @param {string} code - code of unvoted reaction.
+   */
+  public unvote (code: number): void {
+    const votes: number = +this.reactions[code].counter.textContent - 1;
+
+    this.reactions[code].counter.textContent = votes.toString();
+  }
+
+  /**
+   * Set new value of counter stored
+   * @param {string} key - field name.
+   * @param {string} choice - true-set vote , false-remove vote..
+   */
+  private saveValue (key: string | number, choice: boolean): void {
+    const type = choice ? 'vote' : 'unvote';
+    let counters = {};
+
+    for (const key in this.reactions) {
+      counters[key] = +this.reactions[key].counter.textContent;
+    }
+
+    const message = {
+      'type': type,
+      'votedReactionId': key.toString,
+      'reactions': counters,
+      'moduleId': this.id,
+      'userId': Reactions.userId
+    };
+
+    Reactions.socket.send(message);
+  }
+  /**
+   * @param {string | number} userId - id of user.
+   * @param {string} moduleId - id of module.
+   * @returns {string} storage key.
+   */
+  private getStorageKey (userId: string | number, moduleId: Identifier) {
+    return `User${userId}PickedOn${userId.toString}`
+  }
+
+  /**
+   * Set selected reaction and votes
+   * @param {object} msg - contain options
+   * @param {number} msg.votedReactionId - number of picked reaction
+   * @param {number[]} msg.reactions - values of votes
+   */
+  private update (msg) {
+    if (msg.userId === Reactions.userId) {
+      /** If there is no previously picked reaction */
+      if (this.picked === undefined) {
+
+        this.picked = +msg.votedReactionId;
+
+        this.addPickedCSS(this.reactions[this.picked]);
+
+        this.vote(+msg.votedReactionId);
+
+        return;
+      }
+      /** If clicked reaction and previously picked reaction are not the same */
+      if (this.picked !== msg.votedReactionId) {
+        this.removePickedCSS(this.reactions[this.picked]);
+
+        this.unvote(this.picked);
+        this.picked = +msg.votedReactionId;
+
+        this.addPickedCSS(this.reactions[this.picked]);
+
+        this.vote(+msg.votedReactionId);
+        return;
+      }
+
+      /* If clicked reaction and previously picked reaction are the same*/
+      this.removePickedCSS(this.reactions[this.picked]);
+
+      this.unvote(+msg.votedReactionId);
+
+      this.picked = undefined;
+
+    } else {
+      for (const code in this.reactions) {
+        let value = +msg.reactions[code];
+
+        if (value !== undefined) {
+          this.reactions[code].counter.textContent = value.toString();
+        }
+      }
+    }
+  }
+  /**
+   * @param {object} reaction - reaction to mark as picked by CSS classes.
+   */
+  private addPickedCSS (reaction: {emoji: HTMLElement, counter: HTMLElement}) {
+    reaction.emoji.classList.add(Reactions.CSS.picked);
+    reaction.counter.classList.add(Reactions.CSS.votesPicked);
+  }
+
+  /**
+   * @param {object} reaction - reaction to delete picked CSS classes.
+   */
+  private removePickedCSS (reaction: {emoji: HTMLElement, counter: HTMLElement}) {
+    reaction.emoji.classList.remove(Reactions.CSS.picked);
+    reaction.counter.classList.remove(Reactions.CSS.votesPicked);
+  }
+
+  private get picked () {
+    return this._picked;
+  }
+
+  private set picked (value: number) {
+    Storage.setItem( this.getStorageKey(Reactions.userId, this.id) , value);
+    this._picked = value;
   }
 }

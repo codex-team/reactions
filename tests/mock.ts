@@ -42,7 +42,7 @@ function domMock () {
 // @ts-ignore
   window.crypto = wcrypto;
 // @ts-ignore
-  global.localStorage = storageMock();
+  global.localStorage = new LocalStorageMock();
 
 }
 
