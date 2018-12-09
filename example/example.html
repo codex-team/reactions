@@ -3,15 +3,20 @@
 <head>
   <script defer type="text/javascript" src="../dist/reactions.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
+      /*document.addEventListener("DOMContentLoaded", () => {
         const reactionsWindow = new Reactions({
           parent: 'body',
           title: 'What do you think?',
           reactions: ['😁', '😁', '😁']
         });
-      });
+      });*/
     </script>
 </head>
 <body>
+  <reactions data-id='' data-title='What do you think?'>
+    <reaction>😁</reaction>
+    <reaction>👍</reaction>
+    <reaction>😞</reaction>
+  </reactions>
 </body>
 </html>

@@ -4,7 +4,7 @@ import Identifier from './identifier.ts';
  */
 interface ReactionsConfig {
   /** Selector of root element */
-  parent: string;
+  parent?: HTMLElement | string;
 
   /** Array of emoji symbols */
   reactions: string[];
@@ -65,12 +65,22 @@ export default class Reactions {
     const reactions: HTMLElement[] = Array.from(container.querySelectorAll('reaction'));
     let emojis: string[] = [];
 
-    reactions.forEach(item => emojis.push(item.textContent));
+    reactions.forEach(item => this.findEmojis(emojis, item.textContent));
     container.innerHTML = '';
     
-    new Reactions({parent: container.localName, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined});
+    new Reactions({parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined});
   }
 
+  /**
+   * Looks for user's input in <reaction> and checks it before inserting into array
+   * @param {string[]} emojis - array of emojis
+   * @param {string} item - user's input from <reaction>
+   */
+  private static findEmojis(emojis: string[], item: string): void {
+      if (item.length <= 3) {
+        emojis.push(item);
+      }
+  }
 
   /**
    * Return random number
@@ -131,7 +141,7 @@ export default class Reactions {
   /**
    * Create a reactions module.
    * @param {object} data - object containing emojis, title and parent element.
-   * @param {string} data.parent - element where module is inserted.
+   * @param {string|HTMLElement} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
    * @param {string} data.title - title.
    * @param {string | number} data.id - module identifier.
@@ -139,8 +149,7 @@ export default class Reactions {
    */
   public constructor (data: ReactionsConfig) {
     this.wrap = this.createElement('div', Reactions.CSS.wrapper);
-    const parent: HTMLElement = document.querySelector(data.parent);
-
+    const parent: HTMLElement = typeof(data.parent) === 'string' ? document.querySelector(data.parent) : data.parent;
     const pollTitle: HTMLElement = this.createElement('span', Reactions.CSS.title, { textContent: data.title });
 
     this.wrap.append(pollTitle);
