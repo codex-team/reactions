@@ -65,6 +65,7 @@ export default class Reactions {
       title: 'reactions__title',
       votes: 'reactions__counter-votes',
       votesPicked: 'reactions__counter-votes--picked',
+      container: 'reactions__container',
       wrapper: 'reactions'
     };
   }
@@ -93,9 +94,12 @@ export default class Reactions {
   private reactions: {[emodji: string]: {counter: HTMLElement, emoji: HTMLElement; } } = {};
 
   /**
-   * Elements holder
+   * Elements used by module
    */
-  private wrap: HTMLElement;
+  private nodes: {[key: string]: HTMLElement} = {
+    wrap: null,
+    container: null
+  };
 
   /**
    * Create a reactions module.
@@ -109,19 +113,23 @@ export default class Reactions {
   public constructor (data: ReactionsConfig) {
     this.id = new Identifier(data.id);
 
-    this.wrap = DOM.make('div', Reactions.CSS.wrapper);
+    this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
 
     const parent: HTMLElement = document.querySelector(data.parent);
 
     const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
 
-    this.wrap.append(pollTitle);
+    this.nodes.wrap.append(pollTitle);
+
+    this.nodes.container = DOM.make('dic', Reactions.CSS.container);
 
     data.reactions.forEach((item: string) => {
       const hash = this.getEmojiHash(item);
 
       this.reactions[hash] = this.addReaction(item, hash);
     });
+
+    this.nodes.wrap.append(this.nodes.container);
 
     /** Connect with server */
     Reactions.socket.send({
@@ -152,7 +160,7 @@ export default class Reactions {
     });
 
     if (parent) {
-      parent.append(this.wrap);
+      parent.append(this.nodes.wrap);
     } else {
       throw new Error('Parent element is not found');
     }
@@ -179,7 +187,7 @@ export default class Reactions {
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
-    this.wrap.append(reactionContainer);
+    this.nodes.container.append(reactionContainer);
 
     return { emoji, counter };
   }

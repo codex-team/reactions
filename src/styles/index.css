@@ -3,41 +3,49 @@
 .reactions {
   display: flex;
   justify-content: center;
-  color: $grey;
+  color: $text;
   font-family: $font-stack;
 
   &__title {
-    align-self: center;  
+    align-self: center;
     margin-right: 18px;
     font-size: 15px;
     letter-spacing: 0.1px;
   }
 
+  &__container {
+    display: flex;
+    justify-content: space-around;
+    min-width: 250px;
+  }
 
   &__counter {
     display: flex;
     align-items: center;
-    margin: 0 10px;
+    flex-basis: 33%;
 
     &-emoji {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       width: 40px;
       height: 40px;
       margin-right: 11px;
-      border: solid 1px $border-color;
+      border: solid 1px $border;
       border-radius: 35px;
       box-sizing: border-box;
       font-size: 16px;
       cursor: pointer;
-      
+
       &--picked {
-        background-color: $background-color;
+        background-color: $background;
+        border-color: $border--selected;
       }
-      
+
       &:hover {
-        box-shadow: 0px 0px 7px 1px $shadow-color;
+        box-shadow: 0px 0px 4px 7px $background;
+        border-color: $border--hover;
+        background-color: #fff;
       }
 
     }
