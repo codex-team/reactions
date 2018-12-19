@@ -34,7 +34,9 @@ export default class Socket extends EventEmitter {
    * @this {Socket}
    * @param {number} index - index of the reaction
    */
-  send (index: object): void {
+  send (index: any): void {
+    index.origin = location.origin;
+
     this.socket.send(index);
   }
 

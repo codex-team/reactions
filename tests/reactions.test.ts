@@ -88,54 +88,65 @@ describe('Reactions module', () => {
   });
 
   describe('reactionClicked', () => {
-    let testIndex: number = 0;
+    function getEmojiHash (emoji) {
+      const multiplier = 3;
+      let hash = 1;
+
+      for (let i = 0; i < emoji.length; i++) {
+        hash += multiplier * hash + emoji.codePointAt(i);
+      }
+      return hash;
+    }
+
+    const fakeChoice = getEmojiHash('👍');
 
     it('should correctly process firstly picked reaction', () => {
-      testReactions.reactionClicked(testIndex);
 
-      const emojiCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.emoji)[0];
-      const votesCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.votes)[0];
+      testReactions.reactionClicked(fakeChoice);
+
+      const emojiCurrent = counter[0].getElementsByClassName(Reactions.CSS.emoji)[0];
+      const votesCurrent = counter[0].getElementsByClassName(Reactions.CSS.votes)[0];
 
       assert.isOk(emojiCurrent.classList.contains(Reactions.CSS.picked));
       assert.isOk(votesCurrent.classList.contains(Reactions.CSS.votesPicked));
     });
 
     it('should correctly process another reaction', () => {
-      const testPicked: number = testIndex;
+      const newFakeChoice = getEmojiHash('👎');
 
-      testIndex += 1;
-      testReactions.reactionClicked(testIndex);
+      testReactions.reactionClicked(newFakeChoice);
 
-      const emojiCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.emoji)[0];
-      const votesCurrent = counter[testIndex].getElementsByClassName(Reactions.CSS.votes)[0];
-      const emojiPicked = counter[testPicked].getElementsByClassName(Reactions.CSS.emoji)[0];
-      const votesPicked = counter[testPicked].getElementsByClassName(Reactions.CSS.votes)[0];
+      const lastChoiceEmoji = counter[0].getElementsByClassName(Reactions.CSS.emoji)[0];
+      const lastChoiceCounter = counter[0].getElementsByClassName(Reactions.CSS.votes)[0];
+      const emojiPicked = counter[1].getElementsByClassName(Reactions.CSS.emoji)[0];
+      const votesPicked = counter[1].getElementsByClassName(Reactions.CSS.votes)[0];
 
-      assert.isNotOk(emojiPicked.classList.contains(Reactions.CSS.picked));
-      assert.isNotOk(votesPicked.classList.contains(Reactions.CSS.votesPicked));
+      assert.isOk(emojiPicked.classList.contains(Reactions.CSS.picked));
+      assert.isOk(votesPicked.classList.contains(Reactions.CSS.votesPicked));
 
-      assert.isOk(emojiCurrent.classList.contains(Reactions.CSS.picked));
-      assert.isOk(votesCurrent.classList.contains(Reactions.CSS.votesPicked));
+      assert.isNotOk(lastChoiceEmoji.classList.contains(Reactions.CSS.picked));
+      assert.isNotOk(lastChoiceCounter.classList.contains(Reactions.CSS.votesPicked));
 
       assert.equal(document.getElementsByClassName(Reactions.CSS.picked).length, 1);
     });
 
     it('should correctly process again picked reaction', () => {
-      testReactions.reactionClicked(testIndex);
+      const newFakeChoice = getEmojiHash('👎');
+      testReactions.reactionClicked(newFakeChoice);
 
-      const emojiList = counter[testIndex].getElementsByClassName(Reactions.CSS.emoji);
-      const votesList = counter[testIndex].getElementsByClassName(Reactions.CSS.votes);
+      const emojiList = counter[1].getElementsByClassName(Reactions.CSS.emoji);
+      const votesList = counter[1].getElementsByClassName(Reactions.CSS.votes);
 
       assert.isNotOk(emojiList[0].classList.contains(Reactions.CSS.picked));
       assert.isNotOk(votesList[0].classList.contains(Reactions.CSS.votesPicked));
     });
 
     it('should correct save picked reaction in localStorage', () => {
-      testReactions.reactionClicked(testIndex);
+      testReactions.reactionClicked(fakeChoice);
 
-      assert.equal(parseInt(localStorage.getItem(`User${Reactions.userId}PickedOn${String(testReactions.id)}`), 10), testIndex);
+      assert.equal(parseInt(localStorage.getItem(`User${Reactions.userId}PickedOn${String(testReactions.id)}`), 10), fakeChoice);
 
-      testReactions.reactionClicked(testIndex);
+      testReactions.reactionClicked(fakeChoice);
 
       assert.isNaN(parseInt(localStorage.getItem(`User${Reactions.userId}PickedOn${String(testReactions.id)}`), 10));
     });

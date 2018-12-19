@@ -35,15 +35,21 @@ function domMock () {
       </body>
     </html>`,
     { url: 'http://test.test' });
-// @ts-ignore
+  // @ts-ignore
   global.window = dom.window;
-// @ts-ignore
+  // @ts-ignore
   global.document = dom.window.document;
-// @ts-ignore
+  // @ts-ignore
   window.crypto = wcrypto;
-// @ts-ignore
+  // @ts-ignore
   global.localStorage = new LocalStorageMock();
 
+  // @ts-ignore
+  global.location = {
+    host: 'test.test',
+    origin: 'http://test.test',
+    protocol: 'http:'
+  }
 }
 
 function deleteMock () {
