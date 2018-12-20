@@ -20,7 +20,7 @@
     "url": "git+https://github.com/codex-team/reactions.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/codex-team/reactions/issues"
   },
