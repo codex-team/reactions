@@ -33,7 +33,7 @@ interface ReactionsConfig {
   reactions: string[];
 
   /** Title text */
-  title: string;
+  title?: string;
 
   /** Id for module */
   id?: string | number;
@@ -106,8 +106,8 @@ export default class Reactions {
    * @param {object} data - object containing emojis, title and parent element.
    * @param {string} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
-   * @param {string} data.title - title.
-   * @param {string | number} data.id - module identifier.
+   * @param {string} [data.title] - title.
+   * @param {string | number} [data.id] - module identifier.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
@@ -117,11 +117,13 @@ export default class Reactions {
 
     const parent: HTMLElement = document.querySelector(data.parent);
 
-    const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
+    if (data.title) {
+      const pollTitle = this.createTitle(data.title);
 
-    this.nodes.wrap.append(pollTitle);
+      this.nodes.wrap.append(pollTitle);
+    }
 
-    this.nodes.container = DOM.make('dic', Reactions.CSS.container);
+    this.nodes.container = DOM.make('div', Reactions.CSS.container);
 
     data.reactions.forEach((item: string) => {
       const hash = this.getEmojiHash(item);
@@ -172,16 +174,16 @@ export default class Reactions {
   /**
    * Create and insert reactions button
    * @param {string} item - emoji from data.reactions array.
-   * @param {string} code - code of emoji and reactions object key.
+   * @param {string} hash - hash of emoji
    * @returns {object} containing pair of emoji element and it's counter
    */
-  public addReaction (item: any, code: number): { counter: HTMLElement; emoji: HTMLElement } {
+  public addReaction (item: any, hash: number): { counter: HTMLElement; emoji: HTMLElement } {
     const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
     const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
       textContent: item
     });
 
-    emoji.addEventListener('click', () => this.reactionClicked(code));
+    emoji.addEventListener('click', () => this.reactionClicked(hash));
 
     const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
 
@@ -194,32 +196,36 @@ export default class Reactions {
 
   /**
    * Processing click on emoji
-   * @param {number} code - code of emoji and reactions object key.
+   * @param {number} hash - hash of emoji.
    */
-  public reactionClicked (code: number): void {
-    this.update({ userId: Reactions.userId, reaction: code });
+  public reactionClicked (hash: number): void {
+    this.update({ userId: Reactions.userId, reaction: hash });
 
-    this.saveValue(code, this.picked !== undefined);
+    this.saveValue(hash, this.picked !== undefined);
   }
 
   /**
    * Increase counter
-   * @param {string} code - code of voted emoji and reactions object key.
+   * @param {string} hash - hash of voted emoji.
    */
-  public vote (code: number): void {
-    const votes: number = +this.reactions[code].counter.textContent + 1;
+  public vote (hash: number): void {
+    const votes: number = +this.reactions[hash].counter.textContent + 1;
 
-    this.reactions[code].counter.textContent = votes.toString();
+    this.reactions[hash].counter.textContent = votes.toString();
   }
 
   /**
    * Decrease counter
-   * @param {string} code - code of unvoted reaction.
+   * @param {string} hash - hash of unvoted reaction.
    */
-  public unvote (code: number): void {
-    const votes: number = +this.reactions[code].counter.textContent - 1;
+  public unvote (hash: number): void {
+    const votes: number = +this.reactions[hash].counter.textContent - 1;
 
-    this.reactions[code].counter.textContent = votes.toString();
+    this.reactions[hash].counter.textContent = votes.toString();
+  }
+
+  private createTitle (title: string): HTMLElement {
+    return DOM.make('span', Reactions.CSS.title, { textContent: title });
   }
 
   /**
@@ -244,7 +250,8 @@ export default class Reactions {
    * Set selected reaction and votes
    * @param {object} msg - contain options
    * @param {number} msg.reaction - number of picked reaction
-   * @param {number[]} msg.reactions - values of votes
+   * @param {object} msg.options - object with counters values for reactions
+   * @param {number} msg.options[hash] - counter value for certain reaction
    */
   private update (msg) {
     if (msg.options) {
@@ -295,7 +302,7 @@ export default class Reactions {
 
   /**
    * Updates counters styles
-   * @param {number} picked - code of picked emoji
+   * @param {number} picked - hash of picked emoji
    */
   private applyVotedStyles (picked?: number) {
     Object
@@ -314,15 +321,15 @@ export default class Reactions {
   }
 
   /**
-   * Set options` values
+   * Update values of reactions` counters
    * @param options - object with emoji hash as key and counter as value
    */
   private setOptions (options: {[key: number]: number}) {
-    for (const code in this.reactions) {
-      let value = +options[code];
+    for (const hash in this.reactions) {
+      let value = +options[hash];
 
       if (value !== undefined) {
-        this.reactions[code].counter.textContent = value.toString();
+        this.reactions[hash].counter.textContent = value.toString();
       }
     }
   }
@@ -337,12 +344,14 @@ export default class Reactions {
   }
 
   /**
+   * Returns storage key for last user`s reaction
+   *
    * @param {string | number} userId - id of user.
    * @param {string} id - id of module.
    * @returns {string} storage key.
    */
   private getStorageKey (userId: string | number, id: Identifier) {
-    return `User${userId}PickedOn${id.toString()}`;
+    return `User:${userId}:PickedOn:${id.toString()}`;
   }
 
   /**

@@ -144,11 +144,11 @@ describe('Reactions module', () => {
     it('should correct save picked reaction in localStorage', () => {
       testReactions.reactionClicked(fakeChoice);
 
-      assert.equal(parseInt(localStorage.getItem(`User${Reactions.userId}PickedOn${String(testReactions.id)}`), 10), fakeChoice);
+      assert.equal(parseInt(localStorage.getItem(`User:${Reactions.userId}:PickedOn:${String(testReactions.id)}`), 10), fakeChoice);
 
       testReactions.reactionClicked(fakeChoice);
 
-      assert.isNaN(parseInt(localStorage.getItem(`User${Reactions.userId}PickedOn${String(testReactions.id)}`), 10));
+      assert.isNaN(parseInt(localStorage.getItem(`User:${Reactions.userId}:PickedOn:${String(testReactions.id)}`), 10));
     });
   });
 });
