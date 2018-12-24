@@ -47,7 +47,7 @@ where
 > Example
 
 ```javascript
-new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
+new Reactions({parent: 'body', title: 'What do you think?', reactions: ['👍', '👌', '👎']});
 ```
 
 ### Advanced settings
@@ -56,11 +56,11 @@ new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', 
 
 Module uses userId property to identify user - by default userId is random number, but it can be specified through setUserId method
 
-| name  | type  | description    |
-|-------|------ |----------------|
-|userId |number |user identifier |
+| name   | type     | description     |
+|--------|----------|-----------------|
+| userId | `number` | user identifier |
 
-**example:**
+> example:
 
 ```javascript
   Reactions.setUserId(1);
@@ -81,11 +81,6 @@ new Reactions({parent: '', title: '', reactions: [], id: ''});
 
 where
 
-| name | type            | description      |
-|------|-----------------|------------------|
-|id    |string or number |module identifier |
-
-
-
-
-
+| name  | type                 | description       |
+|-------|----------------------|-------------------|
+| id    | `string` or `number` | module identifier |
