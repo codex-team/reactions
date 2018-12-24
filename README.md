@@ -25,15 +25,6 @@ yarn add @codexteam/reactions
 <script src="https://cdn.jsdelivr.net/npm/@codexteam/reactions"></script>
 ```
 
-#### Building from sources
-
-1. Clone or download repository
-2. Provide `.env` file with `serverURL` variable
-3. Install `Yarn`
-4. Install dependencies `yarn install --frozen-lockfile`
-5. Build using `yarn build` command
-6. Find bundle file `reactions.js` in the `dist` folder
-
 ## Usage
 
 ### Simplified initialization
