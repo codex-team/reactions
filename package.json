@@ -8,15 +8,19 @@
     "build:watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "lint": "tslint ./src/**/*.ts --fix",
-    "test": "nyc check-coverage --lines 100 --per-file mocha --require ts-node/register ./tests/*.test.ts",
-    "precommit": "yarn lint && yarn test"
+    "test": "mocha --require ts-node/register ./tests/*.test.ts --exit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint && yarn test"
+    }
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codex-team/reactions.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/codex-team/reactions/issues"
   },
@@ -49,5 +53,7 @@
     "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dotenv-webpack": "^1.5.7"
+  }
 }

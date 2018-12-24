@@ -19,7 +19,7 @@ export default class Identifier {
    * @returns {string}
    */
   private getURL (): string {
-    return document.location.href;
+    return document.location.host + document.location.pathname;
   }
 
   /**

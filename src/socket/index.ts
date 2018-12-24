@@ -11,7 +11,7 @@ export default class Socket extends EventEmitter {
    * @type {SocketIOClient.Socket}
    * @private
    */
-  private socket: SocketIOClient.Socket;
+  public socket: SocketIOClient.Socket;
 
   /**
    * Creates an instance of Socket
@@ -34,7 +34,9 @@ export default class Socket extends EventEmitter {
    * @this {Socket}
    * @param {number} index - index of the reaction
    */
-  send (index: number): void {
+  send (index: any): void {
+    index.origin = location.origin;
+
     this.socket.send(index);
   }
 

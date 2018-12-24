@@ -1,3 +1,4 @@
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: './src/index.ts',
@@ -7,14 +8,14 @@ module.exports = {
     libraryTarget: 'umd',
     libraryExport: 'default'
   },
-    module: {
+  module: {
     rules: [
       {
         test: /\.css$/,
         use: [
           'style-loader',
           {
-            loader: 'css-loader', 
+            loader: 'css-loader',
             options: {
               importLoaders: 1
             }
@@ -31,5 +32,11 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+  resolve: {
+      extensions: ['.ts', '.css', '.js']
+  },
+  plugins: [
+      new Dotenv()
+  ]
 };
