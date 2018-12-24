@@ -1,8 +1,9 @@
 {
-  "name": "reactions",
+  "name": "@codexteam/reactions",
   "version": "1.0.0",
   "description": "Light-weight reactions module",
-  "main": "index.js",
+  "main": "dist/reactions.js",
+  "types": "index.d.ts",
   "scripts": {
     "build:dev": "webpack --mode development",
     "build:watch": "webpack --mode development --watch",
