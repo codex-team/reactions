@@ -29,3 +29,6 @@ declare class Reactions {
    */
   static setUserId(id: string | number);
 }
+
+export as namespace Reactions;
+export default Reactions;
