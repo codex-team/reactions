@@ -38,6 +38,8 @@ function domMock () {
   // @ts-ignore
   global.window = dom.window;
   // @ts-ignore
+  global.HTMLElement = dom.window.HTMLElement;
+  // @ts-ignore
   global.document = dom.window.document;
   // @ts-ignore
   window.crypto = wcrypto;
