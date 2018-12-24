@@ -27,7 +27,7 @@ interface UpdateOptions {
  */
 interface ReactionsConfig {
   /** Selector of root element */
-  parent: string;
+  parent: string | HTMLElement;
 
   /** Array of emoji symbols */
   reactions: string[];
@@ -115,7 +115,13 @@ export default class Reactions {
 
     this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
 
-    const parent: HTMLElement = document.querySelector(data.parent);
+    let parent: HTMLElement;
+
+    if (data.parent instanceof HTMLElement) {
+      parent = data.parent;
+    } else {
+      parent = document.querySelector(data.parent);
+    }
 
     if (data.title) {
       const pollTitle = this.createTitle(data.title);
