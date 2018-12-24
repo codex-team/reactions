@@ -19,6 +19,12 @@ or
 yarn add @codexteam/reactions
 ```
 
+#### Download from CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@codexteam/reactions"></script>
+```
+
 #### Building from sources
 
 1. Clone or download repository
@@ -32,8 +38,8 @@ yarn add @codexteam/reactions
 
 ### Simplified initialization
 
-* connect reactions.js to your html page in script tag
-* create instance of Reactions using 
+1 Connect reactions.js script to your page
+2 Create an instance of Reactions using 
 
 ```javascript
 new Reactions({parent: '', title: '', reactions: []});
@@ -41,11 +47,11 @@ new Reactions({parent: '', title: '', reactions: []});
 
 where
 
-| name      | type   | description                                       |
-|-----------|--------|---------------------------------------------------|
-|parent     |string  |element in which module should be inserted - string|
-|title      |string  |module title                                       |
-|reactions  |string[]|array of emojis to be inserted in module options   |
+| name      | type                      | description                                                               |
+|-----------|---------------------------|---------------------------------------------------------------------------|
+| parent    | `string` or `HTMLElement` | element in which module should be inserted - selector or element instance |
+| title     | `string`                  | module title                                                              |
+| reactions | `string[]`                | array of emojis to be inserted in module options                          |
 
 > Example
 
