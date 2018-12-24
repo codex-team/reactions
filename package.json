@@ -1,5 +1,5 @@
 {
-  "name": "reactions",
+  "name": "@codexteam/reactions",
   "version": "1.0.0",
   "description": "Light-weight reactions module",
   "main": "index.js",

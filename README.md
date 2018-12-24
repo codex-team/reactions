@@ -5,9 +5,28 @@ Allows to build in element, containing buttons - emojis for expressing attitude 
 
 ## Getting started
 
-### Installing 
+### Installation 
 
-Download script from this github repository
+#### npm or Yarn
+
+```bash
+npm install @codexteam/reactions
+```
+
+or
+
+```bash
+yarn add @codexteam/reactions
+```
+
+#### Building from sources
+
+1. Clone or download repository
+2. Provide `.env` file with `serverURL` variable
+3. Install `Yarn`
+4. Install dependencies `yarn install --frozen-lockfile`
+5. Build using `yarn build` command
+6. Find bundle file `reactions.js` in the `dist` folder
 
 ## Usage
 
@@ -15,9 +34,11 @@ Download script from this github repository
 
 * connect reactions.js to your html page in script tag
 * create instance of Reactions using 
-```
+
+```javascript
 new Reactions({parent: '', title: '', reactions: []});
 ```
+
 where
 
 | name      | type   | description                                       |
@@ -26,14 +47,15 @@ where
 |title      |string  |module title                                       |
 |reactions  |string[]|array of emojis to be inserted in module options   |
 
-**example:**
+> Example
 
-```
+```javascript
 new Reactions({parent: 'body', title: 'What do you think?', reactions: ['😁', '😁', '😁']});
 ```
+
 ### Advanced settings
 
-#### Udentify user
+#### Identify user
 
 Module uses userId property to identify user - by default userId is random number, but it can be specified through setUserId method
 
@@ -43,10 +65,10 @@ Module uses userId property to identify user - by default userId is random numbe
 
 **example:**
 
-```
+```javascript
   Reactions.setUserId(1);
 ```
-#### Udentify module
+#### Identify module
 
 By default module takes page URL as module identifier, but it also can be specified manually by passing id to reactions constructor
 
@@ -55,7 +77,8 @@ use it for:
 * binding module to a specific content item, regardless of URL
 
 in this case instance should be created this way
-```
+
+```javascript
 new Reactions({parent: '', title: '', reactions: [], id: ''});
 ```
 
