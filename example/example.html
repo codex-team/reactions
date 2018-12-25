@@ -1,17 +1,34 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>👍 CodeX Reactions</title>
   <script defer type="text/javascript" src="../dist/reactions.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         new Reactions({
-          parent: 'body',
+          parent: '.container',
           title: 'What do you think?',
           reactions: ['👍', '👌', '🤙']
         });
       });
     </script>
+  <style>
+    html, body {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+    }
+
+    .container {
+      margin: auto;
+    }
+  </style>
 </head>
 <body>
+<div class="container">
+</div>
 </body>
 </html>
