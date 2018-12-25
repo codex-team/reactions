@@ -3,54 +3,100 @@
 .reactions {
   display: flex;
   justify-content: center;
-  color: $text-color;
-  font-family: $font-stack;
+  color: var(--text-color);
+  font-family: var(--font-stack);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+  }
 
   &__title {
     align-self: center;
     margin-right: 18px;
     font-size: 15px;
     letter-spacing: 0.1px;
+
+    @media (max-width: 1000px) {
+      margin-bottom: 10px;
+    }
   }
 
   &__container {
     display: flex;
-    justify-content: space-around;
-    min-width: 250px;
+
+    @media (max-width: 1000px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
 
   &__counter {
-    display: flex;
-    align-items: center;
-    flex-basis: 33%;
+    margin: 10px 20px 10px 0;
 
     &-emoji {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-block;
+      vertical-align: middle;
       width: 40px;
       height: 40px;
+      line-height: 40px;
+      text-align: center;
       margin-right: 11px;
-      border: solid 1px $border-color;
+      border: solid 1px var(--border-color);
       border-radius: 35px;
       box-sizing: border-box;
-      font-size: 16px;
+      font-size: 20px;
       cursor: pointer;
+      letter-spacing: -1.5px;
+      will-change: transform, filter, box-shadow, background-color, border-color;
 
       &--picked {
-        background-color: $background-color;
-        border-color: $border-color--selected;
+        background-color: var(--background-color);
+        border-color: var(--border-color--selected);
+        animation: cr-select 600ms ease 1;
+
+        &:hover {
+          animation: cr-select 600ms ease-out 1 !important;
+        }
       }
 
       &:hover {
-        box-shadow: 0px 0px 4px 7px $background-color;
-        border-color: $border-color--hover;
+        border-color: var(--border-color--hover);
+        animation: cr-hover 1000ms ease infinite;
       }
-
     }
 
-    &-votes--picked{
-      font-weight: 600;
+    &-votes {
+      display: inline-block;
+      min-width: 15px;
+      vertical-align: middle;
+
+      &--picked{
+        font-weight: 600;
+      }
     }
   }
+}
+
+@keyframes cr-hover {
+  0% {
+    box-shadow: 0 0 0 10px #FFFACC;
+  }
+
+  40% {
+    box-shadow: 0 0 0 25px rgba(255, 250, 204, 0.4), 0 0 0 10px #FFFACC;
+  }
+
+  40.05% {
+    box-shadow: 0 0 0 5px rgba(255, 250, 204, 0.4), 0 0 0 10px #FFFACC;
+  }
+}
+
+@keyframes cr-select {
+  20% {
+    transform: scale(1.7);
+    filter: blur(1px);
+  }
+
 }

@@ -1,6 +1,8 @@
-$text-color: #8b8b8b;
-$border-color: #d7d7d4;
-$border-color--hover: #ede8b2;
-$border-color--selected: #ebe8bf;
-$background-color: #fffacc;
-$font-stack:  -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+:root  {
+  --text-color: #8b8b8b;
+  --border-color: #d7d7d4;
+  --border-color--hover: #F4E964;
+  --border-color--selected: #ebe8bf;
+  --background-color: #fffacc;
+  --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
