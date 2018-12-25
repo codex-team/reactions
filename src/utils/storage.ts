@@ -16,7 +16,7 @@ export default class Storage {
    * @param {string | number} key - key of storage
    */
   public static getItem (key: string | number): string {
-    return localStorage.getItem(String(key)) || undefined;
+    return localStorage.getItem(key.toString()) || undefined;
   }
   /**
    * Set value by key
@@ -24,6 +24,10 @@ export default class Storage {
    * @param value - setting value
    */
   public static setItem (key: string | number, value: string | number): void {
-    localStorage.setItem(String(key), String(value));
+    localStorage.setItem(key.toString(), String(value));
+  }
+
+  public static removeItem (key: string | number): void {
+    localStorage.removeItem(key.toString());
   }
 }

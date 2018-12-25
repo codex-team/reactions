@@ -47,7 +47,7 @@ export default class Reactions {
   /**
    *  User id for save user reaction
    */
-  public static userId: number | string = Storage.getItem('reactionsUserId') || Common.getRandomValue();
+  public static userId: number | string = Storage.getItem('reactionsUserId') || Common.getRandomValue().toString();
 
   /**
    * Class for connection
@@ -75,7 +75,7 @@ export default class Reactions {
    * @param {number} userId
    */
   public static setUserId (userId: number) {
-    Reactions.userId = userId;
+    Reactions.userId = String(userId);
   }
 
   /**
@@ -134,7 +134,9 @@ export default class Reactions {
     data.reactions.forEach((item: string) => {
       const hash = this.getEmojiHash(item);
 
-      this.reactions[hash] = this.addReaction(item, hash);
+      if (!(hash in this.reactions)) {
+        this.reactions[hash] = this.addReaction(item, hash);
+      }
     });
 
     this.nodes.wrap.append(this.nodes.container);
@@ -151,9 +153,11 @@ export default class Reactions {
       userId: Reactions.userId
     });
 
-    if (Storage.getInt(this.getStorageKey(Reactions.userId, this.id))) {
+    const savedPicked = Storage.getInt(this.getStorageKey());
+
+    if (savedPicked && savedPicked in this.reactions) {
       this.update({
-        reaction: Storage.getInt(this.getStorageKey(Reactions.userId, this.id)),
+        reaction: savedPicked,
         userId: Reactions.userId
       });
     }
@@ -264,7 +268,13 @@ export default class Reactions {
       this.setOptions(msg.options);
     }
 
-    if (msg.userId === Reactions.userId && msg.reaction) {
+    if (msg.userId === Reactions.userId) {
+      if (!msg.reaction) {
+        this.applyVotedStyles();
+        Storage.removeItem(this.getStorageKey());
+        return;
+      }
+
       /** If there is no previously picked reaction */
       if (this.picked === undefined) {
 
@@ -284,6 +294,7 @@ export default class Reactions {
         const oldValue = this.picked;
         this.picked = +msg.reaction;
 
+        /** If it is not message from server, options are omitted */
         if (!msg.options) {
           this.unvote(oldValue);
           this.vote(this.picked);
@@ -293,15 +304,12 @@ export default class Reactions {
         return;
       }
 
-      /* If clicked reaction and previously picked reaction are the same*/
-      this.applyVotedStyles();
-
+      /* If clicked reaction and previously picked reaction are the same */
       if (!msg.options) {
+        this.applyVotedStyles();
         this.unvote(+msg.reaction);
+        this.picked = undefined;
       }
-
-      this.picked = undefined;
-
     }
 
   }
@@ -345,7 +353,7 @@ export default class Reactions {
   }
 
   private set picked (value: number) {
-    Storage.setItem(this.getStorageKey(Reactions.userId, this.id) , value);
+    Storage.setItem(this.getStorageKey() , value);
     this._picked = value;
   }
 
@@ -356,8 +364,8 @@ export default class Reactions {
    * @param {string} id - id of module.
    * @returns {string} storage key.
    */
-  private getStorageKey (userId: string | number, id: Identifier) {
-    return `User:${userId}:PickedOn:${id.toString()}`;
+  private getStorageKey () {
+    return `User:${Reactions.userId}:PickedOn:${this.id.toString()}`;
   }
 
   /**

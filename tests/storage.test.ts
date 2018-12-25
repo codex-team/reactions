@@ -54,4 +54,14 @@ describe('Storage', () => {
       assert.equal(Storage.getInt('test1'), undefined);
     });
   });
+
+  describe('removeItem', () => {
+    it('should remove item from localStorage', () => {
+      Storage.setItem('test_key', 'test_value');
+      assert.equal(Storage.getItem('test_key'), 'test_value');
+
+      Storage.removeItem('test_key');
+      assert.isUndefined(Storage.getItem('test_value'));
+    })
+  })
 });
