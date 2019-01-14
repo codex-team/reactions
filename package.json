@@ -1,40 +1,64 @@
 {
-  "name": "reactions",
-  "version": "1.0.0",
-  "description": "Light-weight reactions module",
-  "main": "index.js",
+  "name": "@codexteam/reactions",
+  "version": "1.0.2",
+  "description": "Collect a feedback for your content without coding",
+  "main": "dist/reactions.js",
+  "types": "index.d.ts",
   "scripts": {
     "build:dev": "webpack --mode development",
     "build:watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "lint": "tslint ./src/**/*.ts --fix"
+    "lint": "tslint ./src/**/*.ts --fix",
+    "test": "mocha --require ts-node/register ./tests/*.test.ts --exit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint && yarn test"
+    }
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codex-team/reactions.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "CodeX",
+    "email": "team@ifmo.su",
+    "url": "https://ifmo.su"
+  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/codex-team/reactions/issues"
   },
   "homepage": "https://github.com/codex-team/reactions#readme",
   "devDependencies": {
+    "@trust/webcrypto": "^0.9.2",
+    "@types/chai": "^4.1.7",
+    "@types/jsdom": "^12.2.0",
+    "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.1",
     "@types/socket.io-client": "^1.4.32",
     "autoprefixer": "^9.3.1",
+    "chai": "^4.2.0",
     "css-loader": "^1.0.1",
     "event-emitter-es6": "^1.1.5",
+    "husky": "^1.1.4",
+    "jsdom": "^13.0.0",
+    "mocha": "^5.2.0",
+    "mocha-typescript": "^1.1.17",
+    "nyc": "^13.1.0",
     "postcss-loader": "^3.0.0",
-    "precss": "^3.1.2",
+    "postcss-nested": "^4.1.1",
     "socket.io-client": "^2.1.1",
     "style-loader": "^0.23.1",
     "ts-loader": "^5.3.0",
+    "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.1.5",
     "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dotenv-webpack": "^1.5.7"
+  }
 }

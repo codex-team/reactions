@@ -1,0 +1,9 @@
+tests/
+src/
+example/
+*.config.js
+CODEOWNERS
+yarn.lock
+tsconfig.json
+tslint.json
+.env.sample
