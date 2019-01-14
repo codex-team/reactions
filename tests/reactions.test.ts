@@ -30,8 +30,6 @@ describe('Reactions module', () => {
 
     testReactions = new Reactions(testData);
 
-    console.log(testReactions);
-
     testData.parent = 'parent-element';
 
     parent = document.getElementsByClassName(testData.parent)[0];
