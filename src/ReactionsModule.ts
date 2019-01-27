@@ -72,6 +72,7 @@ export default class Reactions {
 
   /**
    * Creates modules from user tags and attributes
+   * Use in case of several modules on one page
    */
   public static init (): void {
     const containers: HTMLElement[] = Array.from(document.querySelectorAll('reactions'));
@@ -94,9 +95,9 @@ export default class Reactions {
   }
 
   /**
-   * Looks for user's input in <reaction> and checks it before inserting into array
-   * @param {string[]} emojis - array of emojis
-   * @param {string} item - user's input from <reaction>
+   * Looks for user's input in <reaction> and checks if is it valid before passing array of valid emojis to constructor
+   * @param {string[]} emojis - array of valid emojis
+   * @param {string} item - user's inputed emojis from <reaction>
    */
   private static findEmojis (emojis: string[], item: string): void {
     if (item.length <= 3) {
