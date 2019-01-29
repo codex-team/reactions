@@ -77,32 +77,21 @@ export default class Reactions {
   public static init (): void {
     const containers: HTMLElement[] = Array.from(document.querySelectorAll('reactions'));
 
-    containers.forEach(item => this.insertModules(item));
+    containers.forEach(item => this.insertModule(item));
   }
 
   /**
-   * Inserts modules into page
+   * Inserts module into page
    * @param {HTMLElement} container - users tag to insert module into
    */
-  private static insertModules (container: HTMLElement): void {
+  private static insertModule (container: HTMLElement): void {
     const reactions: HTMLElement[] = Array.from(container.querySelectorAll('reaction'));
     let emojis: string[] = [];
 
-    reactions.forEach(item => this.findEmojis(emojis, item.textContent));
+    reactions.forEach(item => emojis.push( item.textContent));
     container.innerHTML = '';
 
     let reactionsInstance = new Reactions({ parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined });
-  }
-
-  /**
-   * Looks for user's input in <reaction> and checks if is it valid before passing array of valid emojis to constructor
-   * @param {string[]} emojis - array of valid emojis
-   * @param {string} item - user's inputed emojis from <reaction>
-   */
-  private static findEmojis (emojis: string[], item: string): void {
-    if (item.length <= 3) {
-      emojis.push(item);
-    }
   }
 
   /**
