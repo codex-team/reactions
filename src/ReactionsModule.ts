@@ -88,10 +88,10 @@ export default class Reactions {
     const reactions: HTMLElement[] = Array.from(container.querySelectorAll('reaction'));
     let emojis: string[] = [];
 
-    reactions.forEach(item => emojis.push( item.textContent));
+    reactions.forEach(item => emojis.push(item.textContent));
     container.innerHTML = '';
-
-    let reactionsInstance = new Reactions({ parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined });
+    //tslint:disable-next-line
+    new Reactions({ parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined });
   }
 
   /**
