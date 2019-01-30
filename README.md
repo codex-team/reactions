@@ -52,9 +52,9 @@ new Reactions({parent: 'body', title: 'What do you think?', reactions: ['👍', 
 
 ### Initialize using reactions tag
 
-1. Add ``` <reactions> ``` to your page
-2. Provide ``` <reactions> ``` with data-id and data-title to set module id and title
-3. Fill ```<reactions> ``` with ```<reaction>``` each containing emoji to be inserted in module options  
+1. Add `<reactions>` to your page
+2. Provide `<reactions>` with data-id and data-title to set module id and title
+3. Fill `<reactions>` with `<reaction>` each containing emoji to be inserted in module options  
 4. Connect reactions.js script to your page
 5. Run Reactions.init() 
 
