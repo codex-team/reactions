@@ -3,6 +3,7 @@ import Identifier from './identifier';
 import DOM from './utils/dom';
 import Common from './utils/common';
 import Storage from './utils/storage';
+import Fingerprint from './utils/fingerprint';
 
 /**
  * Type of style holder
@@ -141,6 +142,9 @@ export default class Reactions {
 
     this.nodes.wrap.append(this.nodes.container);
 
+    Fingerprint.getHash().then((hash) => {
+      console.log('hash from module', hash);
+    });
     /** Connect with server */
     Reactions.socket.send({
       type : 'initialization',
