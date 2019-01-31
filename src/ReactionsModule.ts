@@ -71,6 +71,30 @@ export default class Reactions {
   }
 
   /**
+   * Creates modules from user tags and attributes
+   * Use in case of several modules on one page
+   */
+  public static init (): void {
+    const containers: HTMLElement[] = Array.from(document.querySelectorAll('reactions'));
+
+    containers.forEach(item => this.insertModule(item));
+  }
+
+  /**
+   * Inserts module into page
+   * @param {HTMLElement} container - users tag to insert module into
+   */
+  private static insertModule (container: HTMLElement): void {
+    const reactions: HTMLElement[] = Array.from(container.querySelectorAll('reaction'));
+    let emojis: string[] = [];
+
+    reactions.forEach(item => emojis.push(item.textContent));
+    container.innerHTML = '';
+    //tslint:disable-next-line
+    new Reactions({ parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined });
+  }
+
+  /**
    * Set userId
    * @param {number} userId
    */
@@ -104,13 +128,14 @@ export default class Reactions {
   /**
    * Create a reactions module.
    * @param {object} data - object containing emojis, title and parent element.
-   * @param {string} data.parent - element where module is inserted.
+   * @param {string|HTMLElement} data.parent - element where module is inserted.
    * @param {string[]} data.reactions - list of emojis.
    * @param {string} [data.title] - title.
    * @param {string | number} [data.id] - module identifier.
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
+    const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
     this.id = new Identifier(data.id);
 
     this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
