@@ -1,12 +1,12 @@
 @import "./variables.css";
 
 .reactions {
-    display: flex;
-    justify-content: center;
-    color: var(--text-color);
-    font-family: var(--font-stack);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+  color: var(--text-color);
+  font-family: var(--font-stack);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1000px) {
     flex-direction: column;
