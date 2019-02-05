@@ -90,7 +90,7 @@ export default class Reactions {
 
     reactions.forEach(item => emojis.push(item.textContent));
     container.innerHTML = '';
-    //tslint:disable-next-line
+    // tslint:disable-next-line
     new Reactions({ parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined });
   }
 
@@ -216,12 +216,15 @@ export default class Reactions {
     const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
 
     let pngName = item.codePointAt().toString(16);
-    if (item.codePointAt(2)) {
-      pngName += '-' + item.codePointAt(2).toString(16);
+    let pos = 2;
+    while (item.codePointAt(pos)) {
+      pngName += '-' + item.codePointAt(pos).toString(16);
+      pos += 2;
     }
 
-    const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
-      innerHTML: `<img class="emojiImg" src="${process.env.SERVER_URL}/emoji/${pngName}.png" alt="${item}">`
+    const emoji: HTMLElement = DOM.make('img', Reactions.CSS.emoji, {
+      src: `${process.env.SERVER_URL}/emoji/${pngName}.png`,
+      alt: item
     });
 
     emoji.addEventListener('click', () => this.reactionClicked(hash));

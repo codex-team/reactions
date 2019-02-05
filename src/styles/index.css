@@ -1,18 +1,12 @@
 @import "./variables.css";
 
-.emojiImg {
-  margin-top: 3px;
-  height: 32px;
-  width: 32px;
-}
-
 .reactions {
-  display: flex;
-  justify-content: center;
-  color: var(--text-color);
-  font-family: var(--font-stack);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    justify-content: center;
+    color: var(--text-color);
+    font-family: var(--font-stack);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1000px) {
     flex-direction: column;
