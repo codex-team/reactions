@@ -4,6 +4,7 @@ import DOM from './utils/dom';
 import Common from './utils/common';
 import Storage from './utils/storage';
 import Fingerprint from './utils/fingerprint';
+import has = Reflect.has;
 
 /**
  * Type of style holder
@@ -20,7 +21,7 @@ interface UpdateOptions {
   reaction: number;
 
   /** Values of votes */
-  reactions?: {[key: string]: number};
+  reactions?: { [key: string]: number };
 }
 
 /**
@@ -38,6 +39,9 @@ interface ReactionsConfig {
 
   /** Id for module */
   id?: string | number;
+
+  /** Token for module */
+  token?: string;
 }
 
 /**
@@ -48,7 +52,12 @@ export default class Reactions {
   /**
    *  User id for save user reaction
    */
-  public static userId: number | string = Storage.getItem('reactionsUserId') || Common.getRandomValue().toString();
+  public static userId: string;
+
+  /**
+   *  Token for save user reaction
+   */
+  public static token: string;
 
   /**
    * Class for connection
@@ -92,15 +101,28 @@ export default class Reactions {
     reactions.forEach(item => emojis.push(item.textContent));
     container.innerHTML = '';
     //tslint:disable-next-line
-    new Reactions({ parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined });
+    new Reactions({
+      parent: container,
+      title: container.dataset.title,
+      reactions: emojis,
+      id: container.dataset.id || undefined
+    });
   }
 
   /**
    * Set userId
    * @param {number} userId
    */
-  public static setUserId (userId: number) {
-    Reactions.userId = String(userId);
+  public static async setUserId () {
+    return Fingerprint.getFingerprint();
+  }
+
+  /**
+   * Set userId
+   * @param {number} userId
+   */
+  public static setToken (token) {
+    return Reactions.token = token;
   }
 
   /**
@@ -116,12 +138,12 @@ export default class Reactions {
   /**
    * Array of counters elements
    */
-  private reactions: {[emodji: string]: {counter: HTMLElement, emoji: HTMLElement; } } = {};
+  private reactions: { [emodji: string]: { counter: HTMLElement, emoji: HTMLElement; } } = {};
 
   /**
    * Elements used by module
    */
-  private nodes: {[key: string]: HTMLElement} = {
+  private nodes: { [key: string]: HTMLElement } = {
     wrap: null,
     container: null
   };
@@ -136,78 +158,88 @@ export default class Reactions {
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
-    const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
-    this.id = new Identifier(data.id);
+    setTimeout(() => {
+      const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, {textContent: data.title});
+      this.id = new Identifier(data.id);
+      Fingerprint.getFingerprint().then((hash) => {
+        Reactions.userId = hash;
+        this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
 
-    this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
+        let parent: HTMLElement;
 
-    let parent: HTMLElement;
+        if (data.parent instanceof HTMLElement) {
+          parent = data.parent;
+        } else {
+          parent = document.querySelector(data.parent);
+        }
 
-    if (data.parent instanceof HTMLElement) {
-      parent = data.parent;
-    } else {
-      parent = document.querySelector(data.parent);
-    }
+        if (data.title) {
+          const pollTitle = this.createTitle(data.title);
 
-    if (data.title) {
-      const pollTitle = this.createTitle(data.title);
+          this.nodes.wrap.append(pollTitle);
+        }
 
-      this.nodes.wrap.append(pollTitle);
-    }
+        this.nodes.container = DOM.make('div', Reactions.CSS.container);
 
-    this.nodes.container = DOM.make('div', Reactions.CSS.container);
+        data.reactions.forEach((item: string) => {
+          const hash = this.getEmojiHash(item);
 
-    data.reactions.forEach((item: string) => {
-      const hash = this.getEmojiHash(item);
+          if (!(hash in this.reactions)) {
+            this.reactions[hash] = this.addReaction(item, hash);
+          }
+        });
 
-      if (!(hash in this.reactions)) {
-        this.reactions[hash] = this.addReaction(item, hash);
-      }
-    });
+        this.nodes.wrap.append(this.nodes.container);
 
-    this.nodes.wrap.append(this.nodes.container);
+        /** Connect with server */
+        Reactions.socket.send({
+          type: 'initialization',
+          title: data.title,
+          options: data.reactions.reduce((options, reaction) => {
+            options[this.getEmojiHash(reaction)] = 0;
+            return options;
+          }, {}),
+          id: this.id,
+          userId: Reactions.userId
+        });
 
-    Fingerprint.getHash().then((hash) => {
-      console.log('hash from module', hash);
-    });
-    /** Connect with server */
-    Reactions.socket.send({
-      type : 'initialization',
-      title: data.title,
-      options: data.reactions.reduce((options, reaction) => {
-        options[this.getEmojiHash(reaction)] = 0;
-        return options;
-      }, {}),
-      id: this.id,
-      userId: Reactions.userId
-    });
+        Reactions.socket.send({
+          type: 'getToken',
+          id: this.id,
+          userId: Reactions.userId
+        });
 
-    const savedPicked = Storage.getInt(this.getStorageKey());
+        const savedPicked = Storage.getInt(this.getStorageKey());
 
-    if (savedPicked && savedPicked in this.reactions) {
-      this.update({
-        reaction: savedPicked,
-        userId: Reactions.userId
+        if (savedPicked && savedPicked in this.reactions) {
+          this.update({
+            reaction: savedPicked,
+            userId: Reactions.userId
+          });
+        }
+
+        /** Get picked reaction */
+        Reactions.socket.socket.on('update', (msg: any): void => {
+          console.log('msg', msg);
+          if (!msg || msg.id !== this.id.toString()) {
+            return;
+          }
+
+          this.update(msg);
+        });
+
+        /** Get picked reaction */
+        Reactions.socket.socket.on('receiveToken', (msg: any): void => {
+          Reactions.setToken(msg);
+        });
+
+        if (parent) {
+          parent.append(this.nodes.wrap);
+        } else {
+          throw new Error('Parent element is not found');
+        }
       });
-    }
-
-    /** Get picked reaction */
-    Reactions.socket.socket.on('update', (msg: any): void => {
-      if (!msg || msg.id !== this.id.toString()) {
-        return;
-      }
-
-      this.update(msg);
-    });
-
-    if (parent) {
-      parent.append(this.nodes.wrap);
-    } else {
-      throw new Error('Parent element is not found');
-    }
-
-    /** Set user id on close page */
-    Storage.setItem('reactionsUserId', Reactions.userId);
+    }, 500);
   }
 
   /**
@@ -224,7 +256,7 @@ export default class Reactions {
 
     emoji.addEventListener('click', () => this.reactionClicked(hash));
 
-    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
+    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, {textContent: 0});
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
@@ -264,7 +296,7 @@ export default class Reactions {
   }
 
   private createTitle (title: string): HTMLElement {
-    return DOM.make('span', Reactions.CSS.title, { textContent: title });
+    return DOM.make('span', Reactions.CSS.title, {textContent: title});
   }
 
   /**
@@ -279,7 +311,8 @@ export default class Reactions {
       type: type,
       reaction: key.toString(),
       id: this.id,
-      userId: Reactions.userId
+      userId: Reactions.userId,
+      token: Reactions.token
     };
 
     Reactions.socket.send(message);
@@ -333,7 +366,7 @@ export default class Reactions {
         return;
       }
 
-      /* If clicked reaction and previously picked reaction are the same */
+      /** If clicked reaction and previously picked reaction are the same */
       if (!msg.options) {
         this.applyVotedStyles();
         this.unvote(+msg.reaction);
@@ -350,7 +383,7 @@ export default class Reactions {
   private applyVotedStyles (picked?: number) {
     Object
       .values(this.reactions)
-      .forEach(({ emoji, counter }: {emoji: HTMLElement, counter: HTMLElement}) => {
+      .forEach(({ emoji, counter }: { emoji: HTMLElement, counter: HTMLElement }) => {
         emoji.classList.remove(Reactions.CSS.picked);
         counter.classList.remove(Reactions.CSS.votesPicked);
       });
@@ -367,7 +400,7 @@ export default class Reactions {
    * Update values of reactions` counters
    * @param options - object with emoji hash as key and counter as value
    */
-  private setOptions (options: {[key: number]: number}) {
+  private setOptions (options: { [key: number]: number }) {
     for (const hash in this.reactions) {
       let value = +options[hash];
 
@@ -382,7 +415,7 @@ export default class Reactions {
   }
 
   private set picked (value: number) {
-    Storage.setItem(this.getStorageKey() , value);
+    Storage.setItem(this.getStorageKey(), value);
     this._picked = value;
   }
 
