@@ -100,7 +100,7 @@ export default class Reactions {
 
     reactions.forEach(item => emojis.push(item.textContent));
     container.innerHTML = '';
-    //tslint:disable-next-line
+    // tslint:disable-next-line
     new Reactions({
       parent: container,
       title: container.dataset.title,
@@ -158,38 +158,57 @@ export default class Reactions {
    * @throws Will throw an error if parent element is not found.
    */
   public constructor (data: ReactionsConfig) {
+    const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
+    this.id = new Identifier(data.id);
+    this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
+
+    let parent: HTMLElement;
+
+    if (data.parent instanceof HTMLElement) {
+      parent = data.parent;
+    } else {
+      parent = document.querySelector(data.parent);
+    }
+
+    if (data.title) {
+      const pollTitle = this.createTitle(data.title);
+
+      this.nodes.wrap.append(pollTitle);
+    }
+
+    this.nodes.container = DOM.make('div', Reactions.CSS.container);
+
+    data.reactions.forEach((item: string) => {
+      const hash = this.getEmojiHash(item);
+
+      if (!(hash in this.reactions)) {
+        this.reactions[hash] = this.addReaction(item, hash);
+      }
+    });
+
+    this.nodes.wrap.append(this.nodes.container);
+
+    const savedPicked = Storage.getInt(this.getStorageKey());
+
+    if (savedPicked && savedPicked in this.reactions) {
+      this.update({
+        reaction: savedPicked,
+        userId: Reactions.userId
+      });
+    }
+
+    if (parent) {
+      parent.append(this.nodes.wrap);
+    } else {
+      throw new Error('Parent element is not found');
+    }
+
+    window.addEventListener('scroll', () => {
+      console.log('is scrolled', this.isScrolledIntoView(this.nodes.container));
+    });
     setTimeout(() => {
-      const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, {textContent: data.title});
-      this.id = new Identifier(data.id);
       Fingerprint.getFingerprint().then((hash) => {
         Reactions.userId = hash;
-        this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
-
-        let parent: HTMLElement;
-
-        if (data.parent instanceof HTMLElement) {
-          parent = data.parent;
-        } else {
-          parent = document.querySelector(data.parent);
-        }
-
-        if (data.title) {
-          const pollTitle = this.createTitle(data.title);
-
-          this.nodes.wrap.append(pollTitle);
-        }
-
-        this.nodes.container = DOM.make('div', Reactions.CSS.container);
-
-        data.reactions.forEach((item: string) => {
-          const hash = this.getEmojiHash(item);
-
-          if (!(hash in this.reactions)) {
-            this.reactions[hash] = this.addReaction(item, hash);
-          }
-        });
-
-        this.nodes.wrap.append(this.nodes.container);
 
         /** Connect with server */
         Reactions.socket.send({
@@ -203,20 +222,12 @@ export default class Reactions {
           userId: Reactions.userId
         });
 
+        /** Ask for token */
         Reactions.socket.send({
           type: 'getToken',
           id: this.id,
           userId: Reactions.userId
         });
-
-        const savedPicked = Storage.getInt(this.getStorageKey());
-
-        if (savedPicked && savedPicked in this.reactions) {
-          this.update({
-            reaction: savedPicked,
-            userId: Reactions.userId
-          });
-        }
 
         /** Get picked reaction */
         Reactions.socket.socket.on('update', (msg: any): void => {
@@ -232,14 +243,8 @@ export default class Reactions {
         Reactions.socket.socket.on('receiveToken', (msg: any): void => {
           Reactions.setToken(msg);
         });
-
-        if (parent) {
-          parent.append(this.nodes.wrap);
-        } else {
-          throw new Error('Parent element is not found');
-        }
       });
-    }, 500);
+    }, 5000);
   }
 
   /**
@@ -256,7 +261,7 @@ export default class Reactions {
 
     emoji.addEventListener('click', () => this.reactionClicked(hash));
 
-    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, {textContent: 0});
+    const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
 
     reactionContainer.append(emoji);
     reactionContainer.append(counter);
@@ -296,7 +301,7 @@ export default class Reactions {
   }
 
   private createTitle (title: string): HTMLElement {
-    return DOM.make('span', Reactions.CSS.title, {textContent: title});
+    return DOM.make('span', Reactions.CSS.title, { textContent: title });
   }
 
   /**
@@ -446,5 +451,13 @@ export default class Reactions {
     }
 
     return hash;
+  }
+
+  private isScrolledIntoView (el) {
+    let rect = el.getBoundingClientRect();
+    let elemTop = rect.top;
+    let elemBottom = rect.bottom;
+
+    return elemTop < window.innerHeight && elemBottom >= 0;
   }
 }
