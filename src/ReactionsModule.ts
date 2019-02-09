@@ -111,18 +111,19 @@ export default class Reactions {
 
   /**
    * Set userId
-   * @param {number} userId
+   * @param {string} userId
    */
-  public static async setUserId () {
-    return Fingerprint.getFingerprint();
+  public static setUserId (userId) {
+    Reactions.userId = userId;
   }
 
   /**
-   * Set userId
-   * @param {number} userId
+   * Set token
+   * @param {string} token
    */
   public static setToken (token) {
-    return Reactions.token = token;
+    console.log(token);
+    Reactions.token = token;
   }
 
   /**
@@ -190,25 +191,28 @@ export default class Reactions {
 
     const savedPicked = Storage.getInt(this.getStorageKey());
 
-    if (savedPicked && savedPicked in this.reactions) {
-      this.update({
-        reaction: savedPicked,
-        userId: Reactions.userId
-      });
-    }
-
     if (parent) {
       parent.append(this.nodes.wrap);
     } else {
       throw new Error('Parent element is not found');
     }
 
-    window.addEventListener('scroll', () => {
-      console.log('is scrolled', this.isScrolledIntoView(this.nodes.container));
-    });
+    /** Timeout allows Fingerprint collect more values */
     setTimeout(() => {
       Fingerprint.getFingerprint().then((hash) => {
-        Reactions.userId = hash;
+        Reactions.setUserId(hash);
+
+        window.addEventListener('scroll', this.listenForToken);
+
+        /** Checks if Reactions are already visible */
+        this.listenForToken();
+
+        if (savedPicked && savedPicked in this.reactions) {
+          this.update({
+            reaction: savedPicked,
+            userId: Reactions.userId
+          });
+        }
 
         /** Connect with server */
         Reactions.socket.send({
@@ -218,13 +222,6 @@ export default class Reactions {
             options[this.getEmojiHash(reaction)] = 0;
             return options;
           }, {}),
-          id: this.id,
-          userId: Reactions.userId
-        });
-
-        /** Ask for token */
-        Reactions.socket.send({
-          type: 'getToken',
           id: this.id,
           userId: Reactions.userId
         });
@@ -239,12 +236,8 @@ export default class Reactions {
           this.update(msg);
         });
 
-        /** Get picked reaction */
-        Reactions.socket.socket.on('receiveToken', (msg: any): void => {
-          Reactions.setToken(msg);
-        });
       });
-    }, 5000);
+    }, 2000);
   }
 
   /**
@@ -298,6 +291,25 @@ export default class Reactions {
     const votes: number = +this.reactions[hash].counter.textContent - 1;
 
     this.reactions[hash].counter.textContent = votes.toString();
+  }
+
+  /**
+   * Check if reactions are visible for user and ask for token
+   */
+  listenForToken = () => {
+    if (DOM.isElementVisible(this.nodes.container)) {
+      window.removeEventListener('scroll', this.listenForToken);
+      /** Ask for token */
+      Reactions.socket.send({
+        type: 'getToken',
+        id: this.id,
+        userId: Reactions.userId
+      });
+
+      Reactions.socket.socket.on('receiveToken', (msg: any): void => {
+        Reactions.setToken(msg);
+      });
+    }
   }
 
   private createTitle (title: string): HTMLElement {
@@ -451,13 +463,5 @@ export default class Reactions {
     }
 
     return hash;
-  }
-
-  private isScrolledIntoView (el) {
-    let rect = el.getBoundingClientRect();
-    let elemTop = rect.top;
-    let elemBottom = rect.bottom;
-
-    return elemTop < window.innerHeight && elemBottom >= 0;
   }
 }
