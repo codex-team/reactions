@@ -202,10 +202,14 @@ export default class Reactions {
       Fingerprint.getFingerprint().then((hash) => {
         Reactions.setUserId(hash);
 
-        window.addEventListener('scroll', this.listenForToken);
+        const debouncedVersion = Common.debounce(() => {
+          this.listenForToken(debouncedVersion);
+        }, 10);
+
+        window.addEventListener('scroll', debouncedVersion);
 
         /** Checks if Reactions are already visible */
-        this.listenForToken();
+        this.listenForToken(debouncedVersion);
 
         if (savedPicked && savedPicked in this.reactions) {
           this.update({
@@ -296,9 +300,9 @@ export default class Reactions {
   /**
    * Check if reactions are visible for user and ask for token
    */
-  listenForToken = () => {
+  private listenForToken (debouncedVersion) {
     if (DOM.isElementVisible(this.nodes.container)) {
-      window.removeEventListener('scroll', this.listenForToken);
+      window.removeEventListener('scroll', debouncedVersion);
       /** Ask for token */
       Reactions.socket.send({
         type: 'getToken',
@@ -310,7 +314,7 @@ export default class Reactions {
         Reactions.setToken(msg);
       });
     }
-  }
+  };
 
   private createTitle (title: string): HTMLElement {
     return DOM.make('span', Reactions.CSS.title, { textContent: title });
