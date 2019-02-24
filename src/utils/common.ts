@@ -36,5 +36,5 @@ export default class Common {
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
     };
-  };
+  }
 }

@@ -122,7 +122,6 @@ export default class Reactions {
    * @param {string} token
    */
   public static setToken (token) {
-    console.log(token);
     Reactions.token = token;
   }
 
