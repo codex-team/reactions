@@ -313,7 +313,7 @@ export default class Reactions {
         Reactions.setToken(msg);
       });
     }
-  };
+  }
 
   private createTitle (title: string): HTMLElement {
     return DOM.make('span', Reactions.CSS.title, { textContent: title });
