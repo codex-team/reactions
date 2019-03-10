@@ -138,7 +138,7 @@ export default class Reactions {
   /**
    * Array of counters elements
    */
-  private reactions: { [emodji: string]: { counter: HTMLElement, emoji: HTMLElement; } } = {};
+  private reactions: { [emoji: string]: { counter: HTMLElement, emoji: HTMLElement; } } = {};
 
   /**
    * Elements used by module
