@@ -203,7 +203,7 @@ export default class Reactions {
 
         const debouncedVersion = Common.debounce(() => {
           this.listenForToken(debouncedVersion);
-        }, 10);
+        }, 200);
 
         window.addEventListener('scroll', debouncedVersion);
 
