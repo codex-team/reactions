@@ -81,12 +81,6 @@ describe('Reactions module', () => {
     });
   });
 
-  describe('Check UserId', () => {
-    it('should set random id', () => {
-      assert.isOk(localStorage.getItem('reactionsUserId'));
-    });
-  });
-
   describe('reactionClicked', () => {
     function getEmojiHash (emoji) {
       const multiplier = 3;

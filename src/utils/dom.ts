@@ -18,4 +18,10 @@ export default class DOM {
 
     return el;
   }
+
+  public static isElementVisible (el: HTMLElement): boolean {
+    let rect = el.getBoundingClientRect();
+
+    return rect.top < window.innerHeight && rect.bottom >= 0;
+  }
 }
