@@ -3,6 +3,8 @@ import Identifier from './identifier';
 import DOM from './utils/dom';
 import Common from './utils/common';
 import Storage from './utils/storage';
+import Fingerprint from './utils/fingerprint';
+import has = Reflect.has;
 
 /**
  * Type of style holder
@@ -19,7 +21,7 @@ interface UpdateOptions {
   reaction: number;
 
   /** Values of votes */
-  reactions?: {[key: string]: number};
+  reactions?: { [key: string]: number };
 }
 
 /**
@@ -37,6 +39,9 @@ interface ReactionsConfig {
 
   /** Id for module */
   id?: string | number;
+
+  /** Token for module */
+  token?: string;
 }
 
 /**
@@ -47,7 +52,12 @@ export default class Reactions {
   /**
    *  User id for save user reaction
    */
-  public static userId: number | string = Storage.getItem('reactionsUserId') || Common.getRandomValue().toString();
+  public static userId: string;
+
+  /**
+   *  Token for save user reaction
+   */
+  public static token: string;
 
   /**
    * Class for connection
@@ -91,15 +101,28 @@ export default class Reactions {
     reactions.forEach(item => emojis.push(item.textContent));
     container.innerHTML = '';
     // tslint:disable-next-line
-    new Reactions({ parent: container, title: container.dataset.title, reactions: emojis, id: container.dataset.id || undefined });
+    new Reactions({
+      parent: container,
+      title: container.dataset.title,
+      reactions: emojis,
+      id: container.dataset.id || undefined
+    });
   }
 
   /**
    * Set userId
-   * @param {number} userId
+   * @param {string} userId
    */
-  public static setUserId (userId: number) {
-    Reactions.userId = String(userId);
+  public static setUserId (userId) {
+    Reactions.userId = userId;
+  }
+
+  /**
+   * Set token
+   * @param {string} token
+   */
+  public static setToken (token) {
+    Reactions.token = token;
   }
 
   /**
@@ -115,12 +138,12 @@ export default class Reactions {
   /**
    * Array of counters elements
    */
-  private reactions: {[emodji: string]: {counter: HTMLElement, emoji: HTMLElement; } } = {};
+  private reactions: { [emoji: string]: { counter: HTMLElement, emoji: HTMLElement; } } = {};
 
   /**
    * Elements used by module
    */
-  private nodes: {[key: string]: HTMLElement} = {
+  private nodes: { [key: string]: HTMLElement } = {
     wrap: null,
     container: null
   };
@@ -137,7 +160,6 @@ export default class Reactions {
   public constructor (data: ReactionsConfig) {
     const pollTitle: HTMLElement = DOM.make('span', Reactions.CSS.title, { textContent: data.title });
     this.id = new Identifier(data.id);
-
     this.nodes.wrap = DOM.make('div', Reactions.CSS.wrapper);
 
     let parent: HTMLElement;
@@ -166,35 +188,7 @@ export default class Reactions {
 
     this.nodes.wrap.append(this.nodes.container);
 
-    /** Connect with server */
-    Reactions.socket.send({
-      type : 'initialization',
-      title: data.title,
-      options: data.reactions.reduce((options, reaction) => {
-        options[this.getEmojiHash(reaction)] = 0;
-        return options;
-      }, {}),
-      id: this.id,
-      userId: Reactions.userId
-    });
-
     const savedPicked = Storage.getInt(this.getStorageKey());
-
-    if (savedPicked && savedPicked in this.reactions) {
-      this.update({
-        reaction: savedPicked,
-        userId: Reactions.userId
-      });
-    }
-
-    /** Get picked reaction */
-    Reactions.socket.socket.on('update', (msg: any): void => {
-      if (!msg || msg.id !== this.id.toString()) {
-        return;
-      }
-
-      this.update(msg);
-    });
 
     if (parent) {
       parent.append(this.nodes.wrap);
@@ -202,8 +196,51 @@ export default class Reactions {
       throw new Error('Parent element is not found');
     }
 
-    /** Set user id on close page */
-    Storage.setItem('reactionsUserId', Reactions.userId);
+    /** Timeout allows Fingerprint collect more values */
+    setTimeout(() => {
+      Fingerprint.getFingerprint().then((hash) => {
+        Reactions.setUserId(hash);
+
+        const debouncedVersion = Common.debounce(() => {
+          this.listenForToken(debouncedVersion);
+        }, 200);
+
+        window.addEventListener('scroll', debouncedVersion);
+
+        /** Checks if Reactions are already visible */
+        this.listenForToken(debouncedVersion);
+
+        if (savedPicked && savedPicked in this.reactions) {
+          this.update({
+            reaction: savedPicked,
+            userId: Reactions.userId
+          });
+        }
+
+        /** Connect with server */
+        Reactions.socket.send({
+          type: 'initialization',
+          title: data.title,
+          options: data.reactions.reduce((options, reaction) => {
+            options[this.getEmojiHash(reaction)] = 0;
+            return options;
+          }, {}),
+          id: this.id,
+          userId: Reactions.userId
+        });
+
+        /** Get picked reaction */
+        Reactions.socket.socket.on('update', (msg: any): void => {
+          console.log('msg', msg);
+          if (!msg || msg.id !== this.id.toString()) {
+            return;
+          }
+
+          this.update(msg);
+        });
+
+      });
+    }, 2000);
   }
 
   /**
@@ -268,6 +305,25 @@ export default class Reactions {
     this.reactions[hash].counter.textContent = votes.toString();
   }
 
+  /**
+   * Check if reactions are visible for user and ask for token
+   */
+  private listenForToken (debouncedVersion) {
+    if (DOM.isElementVisible(this.nodes.container)) {
+      window.removeEventListener('scroll', debouncedVersion);
+      /** Ask for token */
+      Reactions.socket.send({
+        type: 'getToken',
+        id: this.id,
+        userId: Reactions.userId
+      });
+
+      Reactions.socket.socket.on('receiveToken', (msg: any): void => {
+        Reactions.setToken(msg);
+      });
+    }
+  }
+
   private createTitle (title: string): HTMLElement {
     return DOM.make('span', Reactions.CSS.title, { textContent: title });
   }
@@ -284,7 +340,8 @@ export default class Reactions {
       type: type,
       reaction: key.toString(),
       id: this.id,
-      userId: Reactions.userId
+      userId: Reactions.userId,
+      token: Reactions.token
     };
 
     Reactions.socket.send(message);
@@ -338,7 +395,7 @@ export default class Reactions {
         return;
       }
 
-      /* If clicked reaction and previously picked reaction are the same */
+      /** If clicked reaction and previously picked reaction are the same */
       if (!msg.options) {
         this.applyVotedStyles();
         this.unvote(+msg.reaction);
@@ -355,7 +412,7 @@ export default class Reactions {
   private applyVotedStyles (picked?: number) {
     Object
       .values(this.reactions)
-      .forEach(({ emoji, counter }: {emoji: HTMLElement, counter: HTMLElement}) => {
+      .forEach(({ emoji, counter }: { emoji: HTMLElement, counter: HTMLElement }) => {
         emoji.classList.remove(Reactions.CSS.picked);
         counter.classList.remove(Reactions.CSS.votesPicked);
       });
@@ -372,7 +429,7 @@ export default class Reactions {
    * Update values of reactions` counters
    * @param options - object with emoji hash as key and counter as value
    */
-  private setOptions (options: {[key: number]: number}) {
+  private setOptions (options: { [key: number]: number }) {
     for (const hash in this.reactions) {
       let value = +options[hash];
 
@@ -387,7 +444,7 @@ export default class Reactions {
   }
 
   private set picked (value: number) {
-    Storage.setItem(this.getStorageKey() , value);
+    Storage.setItem(this.getStorageKey(), value);
     this._picked = value;
   }
 
