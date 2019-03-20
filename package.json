@@ -40,7 +40,9 @@
     "autoprefixer": "^9.3.1",
     "chai": "^4.2.0",
     "css-loader": "^1.0.1",
+    "dotenv-webpack": "^1.7.0",
     "event-emitter-es6": "^1.1.5",
+    "fingerprintjs2": "^2.0.6",
     "husky": "^1.1.4",
     "jsdom": "^13.0.0",
     "mocha": "^5.2.0",
@@ -57,9 +59,5 @@
     "typescript": "^3.1.5",
     "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2"
-  },
-  "dependencies": {
-    "dotenv-webpack": "^1.5.7",
-    "fingerprintjs2": "^2.0.6"
   }
 }
