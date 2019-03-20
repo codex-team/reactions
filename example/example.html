@@ -4,16 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>👍 CodeX Reactions</title>
-  <script defer type="text/javascript" src="../dist/reactions.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        new Reactions({
-          parent: '.container',
-          title: 'What do you think?',
-          reactions: ['👍', '👌', '🤙']
-        });
-      });
-    </script>
   <style>
     html, body {
       display: flex;
@@ -26,14 +16,19 @@
       margin: auto;
     }
   </style>
+
+  <script defer type="text/javascript" src="../dist/reactions.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      new Reactions({
+        parent: '.container',
+        title: 'What do you think?',
+        reactions: ['👍', '👌', '🤙']
+      });
+    });
+  </script>
 </head>
 <body>
-  <reactions data-id='' data-title='What do you think?'>
-    <reaction>😁</reaction>
-    <reaction>👍</reaction>
-    <reaction>😞</reaction>
-  </reactions>
-<div class="container">
-</div>
+<div class="container"></div>
 </body>
 </html>

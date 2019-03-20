@@ -5,9 +5,9 @@
   "main": "dist/reactions.js",
   "types": "index.d.ts",
   "scripts": {
+    "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
     "build:watch": "webpack --mode development --watch",
-    "build": "webpack --mode production",
     "lint": "tslint ./src/**/*.ts --fix",
     "test": "mocha --require ts-node/register ./tests/*.test.ts --exit"
   },
