@@ -1,9 +1,10 @@
-tests/
-src/
 example/
-*.config.js
+src/
+tests/
+.env.sample
 CODEOWNERS
-yarn.lock
+postcss.config.js
 tsconfig.json
 tslint.json
-.env.sample
+webpack.config.js
+yarn.lock
