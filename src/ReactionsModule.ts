@@ -71,6 +71,7 @@ export default class Reactions {
     return {
       emoji: 'reactions__counter-emoji',
       picked: 'reactions__counter-emoji--picked',
+      background: 'reactions__counter-emoji--background',
       reactionContainer: 'reactions__counter',
       title: 'reactions__title',
       votes: 'reactions__counter-votes',
@@ -250,21 +251,30 @@ export default class Reactions {
    * @returns {object} containing pair of emoji element and it's counter
    */
   public addReaction (item: any, hash: number): { counter: HTMLElement; emoji: HTMLElement } {
-    const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
-
     let pngName = item.codePointAt().toString(16);
-    let pos = 2;
-    while (item.codePointAt(pos)) {
-      pngName += '-' + item.codePointAt(pos).toString(16);
-      pos += 2;
+    let position = 2;
+
+    while (item.codePointAt(position)) {
+      pngName += '-' + item.codePointAt(position).toString(16);
+      position += 2;
     }
 
-    const emoji: HTMLElement = DOM.make('img', Reactions.CSS.emoji, {
-      src: `${process.env.SERVER_URL}/emoji/${pngName}.png`,
-      alt: item
+    const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
+    const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
+      textContent: item
     });
 
     emoji.addEventListener('click', () => this.reactionClicked(hash));
+
+    const backgroundImage = new Image();
+
+    backgroundImage.addEventListener('load', () => {
+      emoji.style.backgroundImage = `url(${backgroundImage.src})`;
+      emoji.innerText = '';
+      emoji.classList.add(Reactions.CSS.background);
+    });
+
+    backgroundImage.src = `${process.env.SERVER_URL}/emoji/${pngName}.png`;
 
     const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
 
