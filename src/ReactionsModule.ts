@@ -251,13 +251,7 @@ export default class Reactions {
    * @returns {object} containing pair of emoji element and it's counter
    */
   public addReaction (item: any, hash: number): { counter: HTMLElement; emoji: HTMLElement } {
-    let pngName = item.codePointAt().toString(16);
-    let position = 2;
-
-    while (item.codePointAt(position)) {
-      pngName += '-' + item.codePointAt(position).toString(16);
-      position += 2;
-    }
+    let emojiUnicode = this.getEmojiUnicode(item);
 
     const reactionContainer: HTMLElement = DOM.make('div', Reactions.CSS.reactionContainer);
     const emoji: HTMLElement = DOM.make('div', Reactions.CSS.emoji, {
@@ -266,7 +260,7 @@ export default class Reactions {
 
     emoji.addEventListener('click', () => this.reactionClicked(hash));
 
-    const backgroundImage = new Image();
+    const backgroundImage = new (window as any).Image();
 
     backgroundImage.addEventListener('load', () => {
       emoji.style.backgroundImage = `url(${backgroundImage.src})`;
@@ -274,7 +268,7 @@ export default class Reactions {
       emoji.classList.add(Reactions.CSS.background);
     });
 
-    backgroundImage.src = `${process.env.SERVER_URL}/emoji/${pngName}.png`;
+    backgroundImage.src = `${process.env.SERVER_URL}/emoji/${emojiUnicode}.png`;
 
     const counter: HTMLElement = DOM.make('span', Reactions.CSS.votes, { textContent: 0 });
 
@@ -485,5 +479,24 @@ export default class Reactions {
     }
 
     return hash;
+  }
+
+  /**
+   * Returns unicode of emoji
+   *
+   * @param {string} item - emoji from data.reactions array.
+   *
+   * @return {string} - Emoji unicode
+   */
+  private getEmojiUnicode (item: string): string {
+    let unicode = item.codePointAt(0).toString(16);
+    let position = 2; // Position of encoded emoji surrogate pair
+
+    while (item.codePointAt(position)) {
+      unicode += '-' + item.codePointAt(position).toString(16);
+      position += 2;
+    }
+
+    return unicode;
   }
 }
