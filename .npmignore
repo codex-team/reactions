@@ -1,6 +1,7 @@
 example/
 src/
 tests/
+.env
 .env.sample
 CODEOWNERS
 postcss.config.js
