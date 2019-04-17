@@ -61,6 +61,13 @@
         }
       }
 
+      &--background {
+        padding: 9px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-origin: content-box;
+      }
+
       &:hover {
         border-color: var(--border-color--hover);
         animation: cr-hover 1000ms ease infinite;
