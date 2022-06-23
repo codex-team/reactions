@@ -44,7 +44,7 @@
     "event-emitter-es6": "^1.1.5",
     "fingerprintjs2": "^2.0.6",
     "husky": "^1.1.4",
-    "jsdom": "^13.0.0",
+    "jsdom": "^16.5.0",
     "mocha": "^5.2.0",
     "mocha-typescript": "^1.1.17",
     "nyc": "^13.1.0",
